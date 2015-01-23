@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 
 // A general pool object for reusable game objects.
 //
@@ -10,16 +12,15 @@ using System.Collections;
 // are available in the pool).
 public class GameObjectPool
 {
-
     // The prefab that the game objects will be instantiated from.
-    private GameObject prefab;
+    public GameObject[] prefabs;
 
     // The list of available game objects (initially empty by default).
-    private Stack available;
+    public Stack available;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    private ArrayList all;
+    private List<GameObject> all;
 
     // An optional function that will be called whenever a new object is instantiated.
     // The newly instantiated object is passed to it, which allows users of the pool
@@ -33,22 +34,27 @@ public class GameObjectPool
     // If an initialCapacity that is <= to zero is provided, the pool uses the default
     // initial capacities of its internal .NET collections.
     //function GameObjectPool(prefab : GameObject, initialCapacity : int, initializationFunction : Function, setActiveRecursively : boolean){
-    public GameObjectPool(GameObject prefab, int initialCapacity)
+    public GameObjectPool(GameObject[] prefabs, int initialCapacity)
     {
-        this.prefab = prefab;
+        this.prefabs = prefabs;
         if (initialCapacity > 0)
         {
             this.available = new Stack(initialCapacity);
-            this.all = new ArrayList(initialCapacity);
+            this.all = new List<GameObject>(initialCapacity);
         }
         else
         {
             // Use the .NET defaults
             this.available = new Stack();
-            this.all = new ArrayList();
+            this.all = new List<GameObject>();
         }
         //this.initializationFunction = initializationFunction;
     }
+
+   private GameObject GetRamdomPrefab()
+   {
+       return prefabs[Random.Range( 0, prefabs.Count())];
+   }
 
     // Spawn a game object with the specified position/rotation.
     public GameObject Spawn(Vector3 position, Quaternion rotation)
@@ -58,7 +64,7 @@ public class GameObjectPool
         if (available.Count == 0)
         {
             // Create an object and initialize it.
-            result = GameObject.Instantiate(prefab, position, rotation) as GameObject;
+            result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
             //if(initializationFunction != null){
             //	initializationFunction(result);
             //}
@@ -147,9 +153,9 @@ public class GameObjectPool
     }
 
     // Returns the prefab being used by this pool.
-    public GameObject GetPrefab()
+    public GameObject[] GetPrefab()
     {
-        return prefab;
+        return prefabs;
     }
 
     // Applies the provided function to some or all of the pool's game objects.

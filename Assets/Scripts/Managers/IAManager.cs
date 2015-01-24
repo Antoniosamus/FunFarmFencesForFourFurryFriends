@@ -6,11 +6,11 @@ using System.Collections.Generic;
 public class IAManager : Singleton<IAManager> 
 {
     public AnimalBehaviourPool AnimalPool;
+    public GameObject[] prefabs;
 
     public void Inizialize(int numbreAnimals)
     {
-        AnimalPool = new AnimalBehaviourPool(numbreAnimals);
-        AnimalPool.PrePopulate(numbreAnimals);
+        AnimalPool = new AnimalBehaviourPool(prefabs, numbreAnimals);
     }
 
     public void AddAnimal(AnimalBehaviour animal)

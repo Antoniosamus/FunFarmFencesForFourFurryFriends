@@ -1,99 +1,135 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Runner))]
+public class FarmerController : RouteFollower, IFarmerEvents
+{
+  [SerializeField]
+	private Runner _runner;
+	private Queue<Vector3> _currentRoute = new Queue<Vector3>();
 
-public class FarmerController : MonoBehaviour {
+  [SerializeField]
+  private float _routeStartDelay = 1f;
+
+  //--------------------------------------------------------------
+  
+  #region IFarmerEvents
+  public event CollisionHandler OnCollideWithObstacle;
+  public event CollisionHandler OnCollideWithWayPoint;
+  public event CollisionHandler OnCollideWithAnimal;
+  #endregion
 
 
-	[SerializeField] List<GameObject> points;
-	[SerializeField] private Queue<Vector3> route;
-	//IRouteTracer tracer; 
-	Runner runner;
 
-	public delegate void CollideWithObstacle(Collider2D collision);
-	public event CollideWithObstacle OnCollideWithObstacle;
+  //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  //////////////////////////////////////////////////////////////////////
 
-	public delegate void CollideWithWayPoint(Collider2D collision);
-	public event CollideWithWayPoint OnCollideWithWayPoint;
 
-	[SerializeField] GameObject pointPrefab;
+  #region MONO
 
-	public void Awake()
+  protected override void Awake()
+  {
+    base.Awake();
+    if (_runner == null) 
+			_runner = GetComponent<Runner>();
+  }
+
+  //------------------------------------------------------
+
+  protected override void OnDestoy()
+  {
+    _runner = null;
+    base.OnDestoy();
+  }
+
+  //--------------------------------------------------------
+
+  protected override void OnEnable()
 	{
-		if (runner == null) 
-		{
-			runner = GetComponent<Runner>();
-		}
+    base.OnEnable();
+		_runner.OnCollision += OnRunnerCollision;
+		FollowRoute();
+	}
+  //------------------------------------------------------
 
-		route = new Queue<Vector3> ();
-		foreach (GameObject vector in points) 
-		{
-			//Instantiate(pointPrefab, vector, Quaternion.identity);
-			Vector2 vectorAux = (Vector2)vector.transform.position;
-			vector.GetComponent<WayPoint>().Owner = runner;
-			route.Enqueue(vectorAux);
-		}
+	protected override void OnDisable()
+	{
+		_runner.OnCollision -= OnRunnerCollision;
+    base.OnDisable();
 	}
 
-	public void OnEnable()
+  #endregion
+
+  //================================================================
+  
+  #region RouteFollower
+  protected override void OnRouteStart(Vector2 startPosition)
+  {
+    _currentRoute.Enqueue(startPosition);
+    Invoke("FollowRoute", _routeStartDelay);
+  }
+
+  //----------------------------------------------------------
+  protected override void OnRouteStay(Vector2 currentPosition)
+  {
+    _currentRoute.Enqueue(currentPosition);
+  }
+  //----------------------------------------------------------
+  protected override void OnRouteStop(Queue<Vector2> route)
+  {
+     // 
+  }
+  //----------------------------------------------------------
+  protected override void OnRouteCancel()
+  {
+    _currentRoute.Clear();
+  }
+  
+  #endregion
+
+
+  //===============================================
+
+
+  // TODO Corrutina...?
+  public void FollowRoute ()
 	{
-		//tracer.OnRouteStart += HandleOnRouteStart;
-		runner.OnCollisionAppears += OnRunnerCollision;
-		FollowRoute ();
+    if(_currentRoute.Count > 0)
+		  _runner.Target = _currentRoute.Dequeue();
 	}
 
-	public void OnDisable()
+  //-------------------------------------------------
+
+	private void OnRunnerCollision (GameObject other)
 	{
-		//tracer.OnRouteStart -= HandleOnRouteStart;
-		runner.OnCollisionAppears -= OnRunnerCollision;
-	}
-	
-	public void FollowRoute ()
-	{
-		Debug.Log (route.Count);
+	  switch(LayerMask.LayerToName(other.layer))
+	  {
+	    case "Obstacle":
+	      if (OnCollideWithObstacle != null)
+	        OnCollideWithObstacle(other);
+	      _currentRoute.Clear ();
+	      break;
 
-		Vector3 direction = route.Dequeue();
-		GoToNextPoint (direction);
-	}
+	    case "Waypoint":
+        if(collider.GetComponent<RoutePoint>().RouteOwner == this) {
+	        FollowRoute();
+	        if (OnCollideWithWayPoint != null)
+	          OnCollideWithWayPoint(other);
+        }
+	      break;
 
-	public void GoToNextPoint(Vector3 point)
-	{
-		runner.GoToNextPoint (point);
-	}
-
-	private void OnRunnerCollision (Collider2D collision)
-	{
-		string collisionName = LayerMask.LayerToName (collision.gameObject.layer);
-
-		if (collisionName == "Obstacle") 
-		{
-			if (OnCollideWithObstacle != null)
-			{
-				OnCollideWithObstacle(collision);
-			}
-			route.Clear ();
-
-		}
-		else if (collisionName == "Waypoint")
-			{
-				FollowRoute();
-
-				if (OnCollideWithWayPoint != null)
-				{
-					OnCollideWithWayPoint(collision);
-				}
-			}
-
-	}
-
-	private void HandleOnRouteStart (Vector3 obj)
-	{
-		FollowRoute ();
+      case "Animal":
+        if(OnCollideWithAnimal != null)
+          OnCollideWithAnimal(other);
+        break;
+	  }
 	}
 
 
+  //==================================================================
 
 
+  
+
+  
 }

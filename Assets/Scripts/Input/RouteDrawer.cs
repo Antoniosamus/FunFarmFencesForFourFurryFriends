@@ -2,6 +2,8 @@
 using UnityEngine;
 
 
+
+[RequireComponent(typeof(FarmerController) )]
 public class RouteDrawer : RouteFollower
 {
   private const int StepCountMax = 200;
@@ -9,16 +11,21 @@ public class RouteDrawer : RouteFollower
   [SerializeField] 
   private string _stepPath = "Route/RouteStep";
   private GameObject _stepPrefab;
-  private GameObjectPool2D _stepSpritePool;
+  private GameObjectPool2D _stepPool;
 
   [SerializeField] 
   private string _targetPath = "Route/RouteTarget";
   private GameObject _targetPrefab;
+  private GameObject _target;
+
+  [SerializeField]
+  private FarmerController _farmerController;
   
   private Vector2 _lastPosition;
   private Vector2 _currentPosition;
 
-  private Queue<GameObject> _stepSprites = new Queue<GameObject>();
+  private Queue<GameObject> _steps = new Queue<GameObject>();
+  
 
 
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -38,18 +45,42 @@ public class RouteDrawer : RouteFollower
     if(_stepPrefab == null) 
       Debug.LogError("<b>RouteDrawer::Awake>> </b> TargetPrefab not found!!", gameObject);
 
-    _stepSpritePool = new GameObjectPool2D(_stepPrefab, StepCountMax);
+    if(_farmerController == null)
+      _farmerController = GetComponent<FarmerController>();
+
+    _stepPool = new GameObjectPool2D(_stepPrefab, StepCountMax);
   }
 
   //---------------------------------------------------------------
 
   protected override void OnDestoy()
   {
-    _stepSprites = null;
+    _steps = null;
+    _stepPool = null;
     _stepPrefab = null;
+    
     _targetPrefab = null;
-    _stepSpritePool = null;
+    _target = null;
+
+    _farmerController = null;
+    
     base.OnDestoy();
+  }
+
+  //----------------------------------------------------
+
+  protected override void OnEnable()
+  {
+    base.OnEnable();
+    _farmerController.OnCollideWithWayPoint += OnFarmerTookAStep;
+  }
+
+  //---------------------------------------------------
+
+  protected override void OnDisable()
+  {
+    _farmerController.OnCollideWithWayPoint -= OnFarmerTookAStep;
+    base.OnDisable();
   }
 
   #endregion
@@ -68,8 +99,10 @@ public class RouteDrawer : RouteFollower
 
   protected override void OnRouteStay(Vector2 nextPosition)
   {
-    _stepSpritePool.Spawn(_currentPosition, 
+    GameObject step = _stepPool.Spawn(_currentPosition, 
       Quaternion.FromToRotation(_stepPrefab.transform.right, nextPosition - _lastPosition));
+
+    _steps.Enqueue(step);
 
     _lastPosition = _currentPosition;
     _currentPosition = nextPosition;
@@ -78,24 +111,40 @@ public class RouteDrawer : RouteFollower
   //------------------------------------------------
   protected override void OnRouteStop(Queue<Vector2> route)
   {
-    //_stepSpritePool.Spawn(_currentPosition, 
-    //  Quaternion.FromToRotation(_stepPrefab.transform.up, targetPosition - _lastPosition));
-    
-    Vector3 targetPosition = new Vector3(_lastPosition.x, _lastPosition.y, _targetPrefab.transform.position.z);
-    Instantiate(_targetPrefab, targetPosition, Quaternion.identity);
+    var targetPosition = new Vector3(_lastPosition.x, _lastPosition.y, _targetPrefab.transform.position.z);
+    _target = Instantiate(_targetPrefab, targetPosition, Quaternion.identity) as GameObject;
   }
 
   //------------------------------------------------
 
   protected override void OnRouteCancel()
   {
-    _stepSpritePool.UnspawnAll();
-    _stepSprites.Clear();
+    _stepPool.UnspawnAll();
+    _steps.Clear();
+
+    if(_target != null) {
+      Destroy(_target);
+      _target = null;
+    }
   }
+
   #endregion
 
 
   //==============================================================
+
+  #region EVENT HANDLERS
+  private void OnFarmerTookAStep(GameObject other)
+  {
+    if(_steps.Count > 0) {
+      _stepPool.Unspawn(_steps.Dequeue());
+    
+    } else if(_target != null) {
+      Destroy(_target);
+      _target = null;
+    }
+  }
+  #endregion
 
 
 

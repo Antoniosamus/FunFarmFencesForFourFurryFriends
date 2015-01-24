@@ -2,60 +2,104 @@
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
+public class Runner : MonoBehaviour
+{
+	[SerializeField] 
+  Vector2 forwardDirection;
+  [SerializeField]
+  private float _angularVelocityAbs = 3;
+  [SerializeField]
+  private float _linearVelocityAbs = 3;
 
-public class Runner : MonoBehaviour{
+	public event CollisionHandler OnCollision;
 
-	[SerializeField] Vector2 forwardDirection;
+  //------------------------------------------------------
 
-	public delegate void OnCollision(Collider2D collision);
-	public event OnCollision OnCollisionAppears;
+  private Vector3 _target;
+	public Vector3 Target { 
+    get { return _target; }
+    set {
+      if(value != _target) {
+        NextRoutePoint.transform.position = _target;
+        _target = value;
+      }
+    }
+  }
+  
+  //------------------------------------------------
 
-	public int angVelModule = 3;
+  private RoutePoint _nextRoutePoint;
+  private RoutePoint NextRoutePoint {
+    get {
+      return  _nextRoutePoint != null ? _nextRoutePoint :
+        ( _nextRoutePoint = new GameObject().AddComponent<RoutePoint>() );  
+    }
+  }
 
-	Vector3 target;
+  //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  /////////////////////////////////////////////////////////////
 
 
-	public void OnEnable()
+  #region MONO
+
+  public void Awake()
+  {
+    rigidbody2D.isKinematic = false;
+    rigidbody2D.gravityScale = 0f;
+  }
+
+  //-------------------------------------
+
+  public void OnEnable()
 	{
-	
+	  // TODO
 	}
 
-	public void GoToNextPoint (Vector3 point)
-	{
-		target = point;
-
-		Walk (point);
-	}
-	
-	void Walk (Vector3 point)
-	{
-		Vector3 vel = this.transform.right;
-	}
+  //----------------------------------------------
 
 	void FixedUpdate()
 	{
-		Vector3 direction = target - this.transform.position;
-		Vector3 result = Vector3.Cross (forwardDirection, direction);
+		Vector3 direction = Target - transform.position;
+		float reorientation = Vector3.Cross(forwardDirection, direction).z;
 
-		rigidbody2D.angularVelocity = angVelModule * result.z;
-
-		rigidbody2D.velocity = Vector3.Normalize(direction) * angVelModule;
+    rigidbody2D.velocity = Vector3.Normalize(direction) * _linearVelocityAbs;
+		rigidbody2D.angularVelocity = _angularVelocityAbs * reorientation;
 	}
 
-	
+  //---------------------------------------
 
-	public void CollisionWith (WayPoint wayPoint)
-	{
-		Stop (wayPoint.collider2D);
-	}
+  private void OnTriggerEnter2D(Collider2D other) 
+  {
+    Debug.Log(name);
+    OnCollision(other.gameObject);
 
-	private void Stop (Collider2D collision)
-	{
-		rigidbody2D.velocity = Vector2.zero;
+  }
+  //-----------------------------------------
 
-		if (OnCollisionAppears != null) 
-		{
-			OnCollisionAppears(collision);
-		}
-	}
+  private void OnCollisionEnter2D(Collision2D other)
+  {
+    OnCollision(other.collider.gameObject);
+  }
+
+  #endregion
+
+  //=============================================================================
+
+
+  //public void CollisionWith(RoutePoint routePoint)
+  //{
+  //  Stop(routePoint.collider2D);
+  //}
+
+  ////--------------------------------------------
+
+  //private void Stop (Collider2D collision)
+  //{
+  //  rigidbody2D.velocity = Vector2.zero;
+
+  //  if (OnCollision != null) 
+  //  {
+  //    OnCollision(collision);
+  //  }
+  //}
 }

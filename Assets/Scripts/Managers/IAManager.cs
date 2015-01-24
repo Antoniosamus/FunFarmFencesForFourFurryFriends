@@ -23,7 +23,7 @@ public class IAManager : Singleton<IAManager>
         AnimalPool.Add(animal, position, rotation);
     }
 
-    public void UnSpawn(AnimalBehaviour animal)
+    public void Kill(AnimalBehaviour animal)
     {
         AnimalPool.Unspawn(animal);
     }
@@ -33,8 +33,19 @@ public class IAManager : Singleton<IAManager>
     /// </summary>
     /// <param name="me"></param>
     /// <returns>AnimalBehaviour or Null</returns>
-    public AnimalBehaviour GetNearestToMe(AnimalBehaviour me) 
+    public void GetNearestToMe(AnimalBehaviour me)
     {
-        return AnimalPool.all.FindAll(x => x.FoodChainLevel < me.FoodChainLevel).OrderBy(x => x.FoodChainLevel).FirstOrDefault();
+        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel < me.FoodChainLevel).OrderBy(x => x.FoodChainLevel);
+        me.AnimalToHunt = null;
+        foreach(var anim in candidates)
+        {
+            RaycastHit hit;
+            if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
+            {
+                // Draw line between m and the hit point
+                me.AnimalToHunt = anim;
+                break;
+            }
+        }
     }
 }

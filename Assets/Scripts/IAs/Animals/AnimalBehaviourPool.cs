@@ -85,7 +85,6 @@ public class AnimalBehaviourPool
         // Create an object and initialize it.
          GameObject result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
         var av = result.GetComponent<AnimalBehaviour>();
-        //this.SetActive(result, true);
 
         if(all.Count > 0)
         {

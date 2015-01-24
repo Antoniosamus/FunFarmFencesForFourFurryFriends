@@ -10,16 +10,14 @@ public class GameManager : Singleton<GameManager> {
 
 	void OnEnable () 
 	{
-
 		IAManager.Instance.Inizialize (AINumber);
-		Vector3 vector;
+        //Vector3 vector;
 
-		for (int i = 0; i < farmerNumber; i++) 
-		{
-			Instantiate (farmerPrefab, GetPerifericPointInPlane(), Quaternion.identity);
-		}
+        //for (int i = 0; i < farmerNumber; i++) 
+        //{
+        //    Instantiate (farmerPrefab, GetPerifericPointInPlane(), Quaternion.identity);
+        //}
 	}
-
 	
 	public Vector3 GetPerifericPointInPlane()
 	{

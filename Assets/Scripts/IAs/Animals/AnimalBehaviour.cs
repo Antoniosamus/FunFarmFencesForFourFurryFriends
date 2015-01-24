@@ -184,7 +184,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         else
         {
             // 2. Move to the target
-            MoveToTarget();
+            runner.GoToNextPoint(Target);
             // 3. Reach it?
         }
     }

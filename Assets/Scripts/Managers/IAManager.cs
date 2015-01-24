@@ -5,11 +5,27 @@ using System.Collections.Generic;
 
 public class IAManager : Singleton<IAManager> 
 {
-    public GameObjectPool AnimalPool;
+    private AnimalBehaviourPool AnimalPool;
 
-    public void Inizialize(int animals)
+    public void Inizialize(int numbreAnimals)
     {
-        AnimalPool.PrePopulate(animals);
+        AnimalPool = new AnimalBehaviourPool(numbreAnimals);
+        AnimalPool.PrePopulate(numbreAnimals);
+    }
+
+    public void AddAnimal(AnimalBehaviour animal)
+    {
+        AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);
+    }
+
+    public void AddAnimal(AnimalBehaviour animal, Vector3 position, Quaternion rotation)
+    {
+        AnimalPool.Add(animal, position, rotation);
+    }
+
+    public void UnSpawn(AnimalBehaviour animal)
+    {
+        AnimalPool.Unspawn(animal);
     }
 
     /// <summary>

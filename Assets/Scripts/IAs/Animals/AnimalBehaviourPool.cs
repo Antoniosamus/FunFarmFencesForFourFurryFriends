@@ -10,15 +10,19 @@ using System.Collections.Generic;
 // objects to avoid calls to Instantiate during gameplay. Can
 // also create objects on demand (which it does if no objects
 // are available in the pool).
+
+[System.Serializable]
 public class AnimalBehaviourPool
 {
 
     // The prefab that the game objects will be instantiated from.
+    [SerializeField]
     private GameObject[] prefabs;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    private List<AnimalBehaviour> all;
+    [HideInInspector]
+    public List<AnimalBehaviour> all;
 
     // An optional function that will be called whenever a new object is instantiated.
     // The newly instantiated object is passed to it, which allows users of the pool
@@ -45,8 +49,38 @@ public class AnimalBehaviourPool
         return prefabs[Random.Range(0, prefabs.Length - 1)];
     }
 
+    public void Add(AnimalBehaviour animal, Vector3 position, Quaternion rotation) 
+    {
+        GameObject result;
+
+        if (all.Count == 0)
+        {
+            if (animal != null) all.Add(animal);
+            else Debug.LogError("Prefab " + animal.gameObject.name + " no tiene componente AnimalBehaviour");
+        }
+        else
+        {
+            result = all.First().gameObject;
+
+            foreach (ParticleSystem ps in result.GetComponentsInChildren<ParticleSystem>())
+                ps.Clear(true);
+            foreach (TrailRenderer trail in result.GetComponentsInChildren<TrailRenderer>())
+                trail.time = 0.0f;
+
+            // Get the result's transform and reuse for efficiency.
+            // Calling gameObject.transform is expensive.
+            var resultTrans = result.transform;
+            resultTrans.position = position;
+            resultTrans.rotation = rotation;
+
+            this.SetActive(result, true);
+        }
+
+        Sort();
+    }
+
     // Spawn a game object with the specified position/rotation.
-    public GameObject Spawn(Vector3 position, Quaternion rotation)
+    public GameObject RandomSpawn(Vector3 position, Quaternion rotation)
     {
         GameObject result;
 
@@ -100,7 +134,7 @@ public class AnimalBehaviourPool
         GameObject[] array = new GameObject[count];
         for (var i = 0; i < count; i++)
         {
-            array[i] = Spawn(Vector3.zero, Quaternion.identity);
+            array[i] = RandomSpawn(Vector3.zero, Quaternion.identity);
             this.SetActive(array[i], false);
         }
         for (var j = 0; j < count; j++)
@@ -108,8 +142,9 @@ public class AnimalBehaviourPool
             var av = array[j].GetComponent<AnimalBehaviour>();
             if (av != null) Unspawn(av);
             else Debug.LogError("Prefab " + av.gameObject.name + " no tiene componente AnimalBehaviour");
-           
         }
+
+        Sort();
     }
 
     // Unspawns all the game objects created by the pool.
@@ -141,5 +176,15 @@ public class AnimalBehaviourPool
     private void SetActive(GameObject obj, bool val)
     {
         obj.SetActive(val);
+    }
+
+    private void Sort()
+    {
+        all.OrderBy(x => x.FoodChainLevel);
+    }
+
+    public void ForceSort()
+    {
+        Sort();
     }
 }

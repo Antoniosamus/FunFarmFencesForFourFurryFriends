@@ -31,8 +31,11 @@ public class Runner : MonoBehaviour
   private RoutePoint _nextRoutePoint;
   private RoutePoint NextRoutePoint {
     get {
-      return  _nextRoutePoint != null ? _nextRoutePoint :
-        ( _nextRoutePoint = new GameObject().AddComponent<RoutePoint>() );  
+      if(_nextRoutePoint == null) {
+        _nextRoutePoint = new GameObject().AddComponent<RoutePoint>();
+        _nextRoutePoint.collider2D.isTrigger = true;
+      }
+      return _nextRoutePoint;
     }
   }
 

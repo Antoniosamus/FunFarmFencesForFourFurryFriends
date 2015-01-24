@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LevelsData>
+  <LevelData id="1">
+    <Player id="1">
+      <name>Player1</name>
+      <score>0</score>
+    </Player>
+    <Farmers>
+      <Amount>1</Amount>
+    </Farmers>
+    <Animal id="1">
+      <name>Ant</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="2">
+      <name>AntEarter</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Obstacle id="1">
+      <name>Roca</name>
+      <Amount>3</Amount>
+    </Obstacle>
+    <PrefabScene>
+      <name>Lvl1</name>
+    </PrefabScene>
+  </LevelData>
+  <LevelData id="2">
+    <Player id="1">
+      <name>Player1</name>
+      <score>0</score>
+    </Player>
+    <Farmers>
+      <Amount>2</Amount>
+    </Farmers>
+    <Animal id="1">
+      <name>Ant</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="2">
+      <name>AntEater</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="3">
+      <name>Chiguagua</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Obstacle id="1">
+      <name>Roca</name>
+      <Amount>3</Amount>
+    </Obstacle>
+    <PrefabScene>
+      <name>Lvl2</name>
+    </PrefabScene>
+  </LevelData>
+</LevelsData>

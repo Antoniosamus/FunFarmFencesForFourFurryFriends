@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager> {
 	
 	private int AINumber = 10;
 	private int farmerNumber = 1;
+
+    private XMLParser LevelFile = new XMLParser();
+    private List<XMLParser.LevelData> lLevelData;
+    private XMLParser.LevelData[] aLevelData;
 
 	[SerializeField] GameObject farmerPrefab;
 
@@ -13,10 +18,14 @@ public class GameManager : Singleton<GameManager> {
 		IAManager.Instance.Inizialize (AINumber);
         //Vector3 vector;
 
+        //Por probar InitializePrefabs();
+
         //for (int i = 0; i < farmerNumber; i++) 
         //{
         //    Instantiate (farmerPrefab, GetPerifericPointInPlane(), Quaternion.identity);
         //}
+
+        
 	}
 	
 	public Vector3 GetPerifericPointInPlane()
@@ -63,5 +72,19 @@ public class GameManager : Singleton<GameManager> {
 		
 		return result;
 	}
+
+    public void InitializePrefabs()
+    {
+        aLevelData = lLevelData.ToArray();
+        //int i = 0;
+        foreach (XMLParser.AnimalData tempAnimalD in aLevelData[0].Animals)
+        {
+            IAManager.Instance.prefabs[0].name = tempAnimalD.name;
+            IAManager.Instance.Inizialize(tempAnimalD.AnimalAmount);
+            //i++;
+        }
+
+        farmerNumber = aLevelData[0].FarmerAmount;
+    }
 
 }

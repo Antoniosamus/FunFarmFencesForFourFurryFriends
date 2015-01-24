@@ -7,8 +7,6 @@ public class AnimalBehaviour : StateMachineBehaviour
 {
 	public int FoodChainLevel;
 	
-	public AnimalBehaviour me;
-	
 	private Vector3 Target = Vector3.zero;
 	public AnimalBehaviour AnimalToHunt;
 	
@@ -64,8 +62,8 @@ public class AnimalBehaviour : StateMachineBehaviour
 			var av = other.GetComponent<AnimalBehaviour>();
 			if (av != null) 
 			{
-				if (av.FoodChainLevel > me.FoodChainLevel) IAManager.Instance.Kill(me);
-				else if (av.FoodChainLevel == me.FoodChainLevel) 
+				if (av.FoodChainLevel > FoodChainLevel) IAManager.Instance.Kill(this);
+				else if (av.FoodChainLevel == FoodChainLevel) 
 				{
 					Target = av.gameObject.transform.position;
 					ChangeState(States.Escape);
@@ -85,7 +83,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 		//Debug.Log("Hunt_Enter");
 		
 		//1. Look for the nearest animal to hunt
-		IAManager.Instance.GetNearestToMe(me);
+		IAManager.Instance.GetNearestToMe(this);
 		
 		if (AnimalToHunt != null) Target = AnimalToHunt.transform.position;
 		

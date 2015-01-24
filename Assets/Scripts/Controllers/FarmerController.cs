@@ -47,14 +47,16 @@ public class FarmerController : RouteFollower, IFarmerEvents
   protected override void OnEnable()
 	{
     base.OnEnable();
-		_runner.OnCollision += OnRunnerCollision;
+		_runner.OnCollision += OnRouteCollision;
+    _runner.OnTargetReach += OnRouteStepReach;
 		FollowRoute();
 	}
   //------------------------------------------------------
 
 	protected override void OnDisable()
 	{
-		_runner.OnCollision -= OnRunnerCollision;
+		_runner.OnCollision -= OnRouteCollision;
+    _runner.OnTargetReach -= OnRouteStepReach;
     base.OnDisable();
 	}
 
@@ -65,7 +67,6 @@ public class FarmerController : RouteFollower, IFarmerEvents
   #region RouteFollower
   protected override void OnRouteStart(Vector2 startPosition)
   {
-    _currentRoute.Enqueue(startPosition);
     Invoke("FollowRoute", _routeStartDelay);
   }
 
@@ -90,17 +91,16 @@ public class FarmerController : RouteFollower, IFarmerEvents
 
   //===============================================
 
+  #region EVENT HANDLERS
 
-  // TODO Corrutina...?
-  public void FollowRoute ()
-	{
-    if(_currentRoute.Count > 0)
-		  _runner.Target = _currentRoute.Dequeue();
-	}
+  private void OnRouteStepReach()
+  {
+	  FollowRoute();
+  }
 
-  //-------------------------------------------------
-
-	private void OnRunnerCollision (GameObject other)
+  //----------------------------------------
+  
+  private void OnRouteCollision (GameObject other)
 	{
 	  switch(LayerMask.LayerToName(other.layer))
 	  {
@@ -110,14 +110,6 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	      _currentRoute.Clear ();
 	      break;
 
-	    case "Waypoint":
-        if(collider.GetComponent<RoutePoint>().RouteOwner == this) {
-	        FollowRoute();
-	        if (OnCollideWithWayPoint != null)
-	          OnCollideWithWayPoint(other);
-        }
-	      break;
-
       case "Animal":
         if(OnCollideWithAnimal != null)
           OnCollideWithAnimal(other);
@@ -125,8 +117,29 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	  }
 	}
 
+  #endregion
 
   //==================================================================
+
+
+  // TODO Corrutina...? Mejorar bucles....
+  public void FollowRoute()
+	{
+    while(_currentRoute.Count > 0 && _currentRoute.Peek() == _runner.Target)
+      _currentRoute.Dequeue();
+
+    if(_currentRoute.Count > 0)
+		  _runner.Target = _currentRoute.Dequeue();
+
+    // TODO OnRouteComplete
+	}
+
+  //-------------------------------------------------
+
+	
+
+
+  
 
 
   

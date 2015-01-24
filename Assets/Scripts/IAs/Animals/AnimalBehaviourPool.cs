@@ -132,7 +132,9 @@ public class AnimalBehaviourPool
         GameObject[] array = new GameObject[count];
         for (var i = 0; i < count; i++)
         {
-            array[i] = RandomSpawn(Vector3.zero, Quaternion.identity);
+			Vector2 point = GameManager.Instance.GetPerifericPointInPlane();
+
+            array[i] = RandomSpawn(new Vector3(point.x, point.y, 0), Quaternion.identity);
             this.SetActive(array[i], true);
         }
 

@@ -65,7 +65,7 @@ public class GameManager : Singleton<GameManager> {
 		
 		Vector3 screenSize = new Vector3(Screen.currentResolution.width, Screen.currentResolution.height, 10);
 
-		vecAux.y = Random.Range (0, screenSize.z);
+		vecAux.y = Random.Range (0, screenSize.y);
 		vecAux.x = Random.Range (0, screenSize.x);
 
 		result = (Vector2)(Camera.main.ScreenToWorldPoint(vecAux));

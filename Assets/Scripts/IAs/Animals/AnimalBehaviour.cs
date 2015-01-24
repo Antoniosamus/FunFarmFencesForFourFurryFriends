@@ -8,7 +8,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 
     public AnimalBehaviour me;
 
-    public Vector3 Target = Vector3.zero;
+    public Vector2 Target = Vector3.zero;
 
     public enum States
     {
@@ -30,7 +30,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 
         if (animal != null) Target = animal.transform.position;
 
-        if (Target == Vector3.zero) ChangeState(States.Pasture);
+        if (Target == Vector2.zero) ChangeState(States.Pasture);
     }
 
     void Hunt_Update()
@@ -59,7 +59,7 @@ public class AnimalBehaviour : StateMachineBehaviour
     {
         Debug.Log("Pasture_Update");
         // 1. Select ramdom target near to me
-        if (Target == Vector3.zero)
+        if (Target == Vector2.zero)
         {
             // 1.Find a near point to me
             Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
@@ -74,7 +74,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 
     private void MoveToTarget()
     {
-        if (Target != Vector3.zero)
+        if (Target != Vector2.zero)
         {
  
         }
@@ -84,6 +84,6 @@ public class AnimalBehaviour : StateMachineBehaviour
     {
         Debug.Log("Pasture_Exit");
         //1. No idea what to do here
-        Target = Vector3.zero;
+        Target = Vector2.zero;
     }
 }

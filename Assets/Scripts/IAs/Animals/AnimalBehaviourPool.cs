@@ -117,10 +117,10 @@ public class AnimalBehaviourPool
     public bool Unspawn(AnimalBehaviour obj)
     {
         if (all.Contains(obj))
-        { // Make sure we don't insert it twice.
+        {
+            // Make sure we don't insert it twice.
             all.Remove(obj);
-            //this.SetActive(obj.gameObject, false);
-            Object.Destroy(obj);
+            Object.DestroyObject(obj.gameObject);
             return true; // Object inserted back in stack.
         }
         return false; // Object already in stack.
@@ -132,7 +132,12 @@ public class AnimalBehaviourPool
         GameObject[] array = new GameObject[count];
         for (var i = 0; i < count; i++)
         {
-			Vector2 point = GameManager.Instance.GetPerifericPointInPlane();
+            Vector2 point = GameManager.Instance.GetRandomPointInPlane();
+
+            point.x = Random.Range(-10, 10);
+            point.y = Random.Range(-10, 10);
+
+            //Debug.Log(point.x + " " + point.y);
 
             array[i] = RandomSpawn(new Vector3(point.x, point.y, 0), Quaternion.identity);
             this.SetActive(array[i], true);

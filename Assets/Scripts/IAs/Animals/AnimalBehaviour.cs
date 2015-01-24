@@ -44,40 +44,39 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	private void OnRunnerRouteInterrupt(GameObject other)
 	{
-        //Debug.Log(name + " reached " + other.name);
-		string collisionName = LayerMask.LayerToName(other.layer);
-		
-		//Esto es un ñordo pero bueno
-		switch (collisionName)
-		{
-		case "Fence":
-			switch ((States)GetState()) 
-			{
-			case States.Hunt:
-				HuntOnRunnerCollision(other);
-				break;
-			case States.Pasture:
-				PastureOnRunnerCollision(other);
-				break;
-			case States.Escape:
-				EscapeOnRunnerCollision(other);
-				break;
-			}
-			break;
-		case "Animal":
-			var av = other.GetComponent<AnimalBehaviour>();
-			if (av != null) 
-			{
-				if (av.FoodChainLevel > FoodChainLevel) IAManager.Instance.Kill(this);
-				else if (av.FoodChainLevel == FoodChainLevel) 
-				{
-					Target = av.gameObject.transform.position;
-					ChangeState(States.Escape);
-				}
-				else ChangeState(States.Hunt);
-			}
-			break;
-		}
+        string collisionName = LayerMask.LayerToName(other.layer);
+        //Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
+        //Esto es un ñordo pero bueno
+        switch (collisionName)
+        {
+            case "Fence":
+                switch ((States)GetState())
+                {
+                    case States.Hunt:
+                        HuntOnRunnerCollision(other);
+                        break;
+                    case States.Pasture:
+                        PastureOnRunnerCollision(other);
+                        break;
+                    case States.Escape:
+                        EscapeOnRunnerCollision(other);
+                        break;
+                }
+                break;
+            case "Animal":
+                var av = other.GetComponent<AnimalBehaviour>();
+                if (av != null)
+                {
+                    if (av.FoodChainLevel < FoodChainLevel) IAManager.Instance.Kill(this);
+                    else if (av.FoodChainLevel == FoodChainLevel)
+                    {
+                        Target = av.gameObject.transform.position;
+                        ChangeState(States.Escape);
+                    }
+                    else ChangeState(States.Hunt);
+                }
+                break;
+        }
 	}
 	
 	#endregion
@@ -170,6 +169,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	{
 		//Debug.Log("Escape_Enter");
 		//1. Pillo un punto al que huir
+        Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
 		
 	}
 	

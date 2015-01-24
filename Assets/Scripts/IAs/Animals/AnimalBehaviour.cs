@@ -16,26 +16,26 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	#region Inicialization
 
-    public void Awake() 
+    void Awake() 
     {
         if (runner == null)
             runner = GetComponent<Runner>();
     }
 
-	public void Start()
+	void Start()
 	{
         Initialize<States>();
         ChangeState(States.Hunt);
 	}
 
-    public void OnEnable()
+    void OnEnable()
     {
-        runner.OnCollision += OnRunnerCollision;
+        //runner.OnCollision += OnRunnerCollision;
     }
 
-	public void OnDisable()
+	void OnDisable()
 	{
-		runner.OnCollision -= OnRunnerCollision;
+		//runner.OnCollision -= OnRunnerCollision;
 	}
 	
 	#endregion

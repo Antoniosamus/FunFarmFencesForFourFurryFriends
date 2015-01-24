@@ -15,8 +15,7 @@ using System.Collections.Generic;
 public class AnimalBehaviourPool
 {
     // The prefab that the game objects will be instantiated from.
-    [SerializeField]
-    private GameObject[] prefabs;
+    public GameObject[] prefabs;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).

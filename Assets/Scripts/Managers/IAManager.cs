@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class IAManager : Singleton<IAManager> 
 {
-    private AnimalBehaviourPool AnimalPool;
+    public AnimalBehaviourPool AnimalPool;
 
     public void Inizialize(int numbreAnimals)
     {

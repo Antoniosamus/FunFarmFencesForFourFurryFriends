@@ -30,7 +30,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 
         if (animal != null) Target = animal.transform.position;
 
-        if (Target == null) ChangeState(States.Pasture);
+        if (Target == Vector3.zero) ChangeState(States.Pasture);
     }
 
     void Hunt_Update()

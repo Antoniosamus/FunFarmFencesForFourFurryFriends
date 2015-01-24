@@ -5,53 +5,53 @@ using System.Collections;
 
 public class Runner : MonoBehaviour{
 
-	Rigidbody2D rigidbody;
-	BoxCollider2D collider;
-	//[SerializeField] Vector2 velocity;
-	
-	public delegate void OnCollision(Collision2D collision);
+	[SerializeField] Vector2 forwardDirection;
+
+	public delegate void OnCollision(Collider2D collision);
 	public event OnCollision OnCollisionAppears;
+
+	public int angVelModule = 3;
+
+	Vector3 target;
 
 
 	public void OnEnable()
 	{
-		if (rigidbody == null) 
-		{
-			rigidbody = GetComponent<Rigidbody2D>();
-		}
+	
 	}
 
 	public void GoToNextPoint (Vector3 point)
 	{
-		transform.LookAt(point);
+		target = point;
+
 		Walk (point);
 	}
 	
 	void Walk (Vector3 point)
 	{
 		Vector3 vel = this.transform.right;
-
-		Debug.Log (this.transform.TransformDirection (vel));
-
-		rigidbody.velocity = (Vector2)transform.forward;
-
-
 	}
 
 	void FixedUpdate()
 	{
-		rigidbody.velocity = transform.forward;
+		Vector3 direction = target - this.transform.position;
+		Vector3 result = Vector3.Cross (forwardDirection, direction);
+
+		rigidbody2D.angularVelocity = angVelModule * result.z;
+
+		rigidbody2D.velocity = Vector3.Normalize(direction) * angVelModule;
 	}
 
+	
 
-	private void OnCollisionEnter2D(Collision2D collision)
+	public void CollisionWith (WayPoint wayPoint)
 	{
-		Stop (collision);
+		Stop (wayPoint.collider2D);
 	}
 
-	private void Stop (Collision2D collision)
+	private void Stop (Collider2D collision)
 	{
-		rigidbody.velocity = Vector2.zero;
+		rigidbody2D.velocity = Vector2.zero;
 
 		if (OnCollisionAppears != null) 
 		{

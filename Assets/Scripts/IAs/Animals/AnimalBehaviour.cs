@@ -43,7 +43,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 
     #region Events
 
-    private void OnRunnerCollision(Collision2D collision)
+    private void OnRunnerCollision(Collider2D collision)
     {
         string collisionName = LayerMask.LayerToName(collision.collider.gameObject.layer);
 
@@ -118,7 +118,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         Target = Vector3.zero;
     }
 
-    void Hunt_OnRunnerCollision(Collision2D collision)
+    void Hunt_OnRunnerCollision(Collider2D collision)
     {
         ChangeState(States.Hunt);
     }
@@ -156,7 +156,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         Target = Vector2.zero;
     }
 
-    void Pasture_OnRunnerCollision(Collision2D collision) 
+    void Pasture_OnRunnerCollision(Collider2D collision) 
     {
         ChangeState(States.Hunt);
     }
@@ -198,7 +198,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         ChangeState(States.Hunt);
     }
 
-    void Escape_OnRunnerCollision(Collision2D collision)
+    void Escape_OnRunnerCollision(Collider2D collision)
     {
         ChangeState(States.Hunt);
     }

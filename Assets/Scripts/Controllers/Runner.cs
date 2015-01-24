@@ -12,13 +12,13 @@ public class Runner : MonoBehaviour
   [SerializeField]
   private float _linearVelocityAbs = 3;
 
-	public event CollisionHandler OnCollision;
+	public event Action<GameObject> OnRouteInterrupt;
   public event Action OnTargetReach;
 
   //------------------------------------------------------
 
-  private Vector3 _target;
-	public Vector3 Target { 
+  private Vector2 _target;
+	public Vector2 Target { 
     get { return _target; }
     set {
       if(value != _target) {
@@ -78,7 +78,7 @@ public class Runner : MonoBehaviour
     if(!_isFollowingTarget)
       return;
 
-		Vector3 direction = Target - transform.position;
+		Vector2 direction = Target - (Vector2) transform.position;
 		float reorientation = Vector3.Cross(forwardDirection, direction).z;
 
     rigidbody2D.velocity = Vector3.Normalize(direction) * _linearVelocityAbs;
@@ -97,7 +97,7 @@ public class Runner : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D other)
   {
-    Collision(other.collider.gameObject);
+    Collision(other.gameObject);
   }
 
   #endregion
@@ -119,27 +119,11 @@ public class Runner : MonoBehaviour
   //----------------------------------------------
   protected virtual void Collision(GameObject other)
   {
-    CollisionHandler e = OnCollision;
+    Action<GameObject> e = OnRouteInterrupt;
     if(e != null)
       e(other);
   }
   #endregion
 
 
-  //public void CollisionWith(RoutePoint routePoint)
-  //{
-  //  Stop(routePoint.collider2D);
-  //}
-
-  ////--------------------------------------------
-
-  //private void Stop (Collider2D collision)
-  //{
-  //  rigidbody2D.velocity = Vector2.zero;
-
-  //  if (OnCollision != null) 
-  //  {
-  //    OnCollision(collision);
-  //  }
-  //}
 }

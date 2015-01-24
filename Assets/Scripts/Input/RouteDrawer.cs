@@ -66,23 +66,6 @@ public class RouteDrawer : RouteFollower
     
     base.OnDestoy();
   }
-
-  //----------------------------------------------------
-
-  protected override void OnEnable()
-  {
-    base.OnEnable();
-    _farmerController.OnCollideWithWayPoint += OnFarmerTookAStep;
-  }
-
-  //---------------------------------------------------
-
-  protected override void OnDisable()
-  {
-    _farmerController.OnCollideWithWayPoint -= OnFarmerTookAStep;
-    base.OnDisable();
-  }
-
   #endregion
 
 
@@ -102,6 +85,7 @@ public class RouteDrawer : RouteFollower
     GameObject step = _stepPool.Spawn(_currentPosition, 
       Quaternion.FromToRotation(_stepPrefab.transform.right, nextPosition - _lastPosition));
 
+    step.GetComponent<RoutePoint>().ParentDrawer = this;
     _steps.Enqueue(step);
 
     _lastPosition = _currentPosition;
@@ -113,6 +97,7 @@ public class RouteDrawer : RouteFollower
   {
     var targetPosition = new Vector3(_lastPosition.x, _lastPosition.y, _targetPrefab.transform.position.z);
     _target = Instantiate(_targetPrefab, targetPosition, Quaternion.identity) as GameObject;
+    _target.GetComponent<RoutePoint>().ParentDrawer = this;
   }
 
   //------------------------------------------------
@@ -132,20 +117,15 @@ public class RouteDrawer : RouteFollower
 
 
   //==============================================================
-
-  #region EVENT HANDLERS
-  private void OnFarmerTookAStep(GameObject other)
+  
+  public void EraseRoutePoint(RoutePoint routePoint)
   {
-    if(_steps.Count > 0) {
-      _stepPool.Unspawn(_steps.Dequeue());
+    if(routePoint != _target) {
+      _stepPool.Unspawn(routePoint.gameObject);
     
-    } else if(_target != null) {
-      Destroy(_target);
+    } else {
+      Destroy(_target.gameObject);
       _target = null;
     }
   }
-  #endregion
-
-
-
 }

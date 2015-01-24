@@ -6,7 +6,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 {
   [SerializeField]
 	private Runner _runner;
-	private Queue<Vector3> _currentRoute = new Queue<Vector3>();
+	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
   [SerializeField]
   private float _routeStartDelay = 1f;
@@ -15,7 +15,6 @@ public class FarmerController : RouteFollower, IFarmerEvents
   
   #region IFarmerEvents
   public event CollisionHandler OnCollideWithObstacle;
-  public event CollisionHandler OnCollideWithWayPoint;
   public event CollisionHandler OnCollideWithAnimal;
   #endregion
 
@@ -47,7 +46,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
   protected override void OnEnable()
 	{
     base.OnEnable();
-		_runner.OnCollision += OnRouteCollision;
+		_runner.OnRouteInterrupt += OnRouteRouteInterrupt;
     _runner.OnTargetReach += OnRouteStepReach;
 		FollowRoute();
 	}
@@ -55,7 +54,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 
 	protected override void OnDisable()
 	{
-		_runner.OnCollision -= OnRouteCollision;
+		_runner.OnRouteInterrupt -= OnRouteRouteInterrupt;
     _runner.OnTargetReach -= OnRouteStepReach;
     base.OnDisable();
 	}
@@ -100,7 +99,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 
   //----------------------------------------
   
-  private void OnRouteCollision (GameObject other)
+  private void OnRouteRouteInterrupt (GameObject other)
 	{
 	  switch(LayerMask.LayerToName(other.layer))
 	  {

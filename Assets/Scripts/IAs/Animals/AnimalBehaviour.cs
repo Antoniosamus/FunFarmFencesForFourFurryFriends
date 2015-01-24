@@ -16,11 +16,11 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	#region Inicialization
 
-    void Awake() 
-    {
-        if (runner == null)
-            runner = GetComponent<Runner>();
-    }
+  void Awake() 
+  {
+      if (runner == null)
+          runner = GetComponent<Runner>();
+  }
 
 	void Start()
 	{
@@ -28,21 +28,22 @@ public class AnimalBehaviour : StateMachineBehaviour
         ChangeState(States.Hunt);
 	}
 
-    void OnEnable()
-    {
-        //runner.OnCollision += OnRunnerCollision;
-    }
+  void OnEnable()
+  {
+    if(runner != null)
+      runner.OnRouteInterrupt += go => Debug.Log(name);
+  }
 
 	void OnDisable()
 	{
-		//runner.OnCollision -= OnRunnerCollision;
+		//runner.OnRouteInterrupt -= OnRunnerRouteInterrupt;
 	}
 	
 	#endregion
 	
 	#region Events
 	
-	private void OnRunnerCollision(GameObject other)
+	private void OnRunnerRouteInterrupt(GameObject other)
 	{
 		string collisionName = LayerMask.LayerToName(other.layer);
 		

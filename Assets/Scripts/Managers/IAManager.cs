@@ -8,9 +8,9 @@ public class IAManager : Singleton<IAManager>
     public AnimalBehaviourPool AnimalPool;
     public GameObject[] prefabs;
 
-    public void Inizialize(int numbreAnimals)
+    public void Inizialize(int numberAnimals)
     {
-        AnimalPool = new AnimalBehaviourPool(prefabs, numbreAnimals);
+        AnimalPool = new AnimalBehaviourPool(prefabs, numberAnimals);
     }
 
     public void AddAnimal(AnimalBehaviour animal)

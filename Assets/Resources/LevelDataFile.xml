@@ -9,9 +9,15 @@
       <Amount>1</Amount>
     </Farmers>
     <Animal id="1">
+      <name>Ant</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="2">
+      <name>AntEarter</name>
       <Amount>2</Amount>
     </Animal>
     <Obstacle id="1">
+      <name>Roca</name>
       <Amount>3</Amount>
     </Obstacle>
     <PrefabScene>
@@ -27,9 +33,19 @@
       <Amount>2</Amount>
     </Farmers>
     <Animal id="1">
+      <name>Ant</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="2">
+      <name>AntEater</name>
+      <Amount>2</Amount>
+    </Animal>
+    <Animal id="3">
+      <name>Chiguagua</name>
       <Amount>2</Amount>
     </Animal>
     <Obstacle id="1">
+      <name>Roca</name>
       <Amount>3</Amount>
     </Obstacle>
     <PrefabScene>

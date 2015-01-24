@@ -17,12 +17,14 @@ public class XMLParser : MonoBehaviour
     public struct AnimalData
     {
         public int AnimalId;
+        public string name;
         public int AnimalAmount;
     }
 
     public struct ObstacleData
     {
         public int ObstacleId;
+        public string name;
         public int ObstAmount;
     }
 
@@ -88,9 +90,12 @@ public class XMLParser : MonoBehaviour
     {
         foreach (XmlElement node in xmlDoc.SelectNodes(Defines.NodeLevelData))
         {
-            
+
             LevelData tempLvlData = new LevelData();
-            foreach( XmlElement nPlayer in xmlDoc.SelectNodes(Defines.NodePlayerData))
+            tempLvlData.Animals = new List<AnimalData>();
+            tempLvlData.Obstacles = new List<ObstacleData>();
+
+            foreach (XmlElement nPlayer in xmlDoc.SelectNodes(Defines.NodePlayerData))
             {
                 tempLvlData.PlayerId = int.Parse(nPlayer.GetAttribute(Defines.Id));
                 tempLvlData.name = nPlayer.SelectSingleNode(Defines.Name).InnerText;
@@ -98,23 +103,24 @@ public class XMLParser : MonoBehaviour
 
                 //displayPlayeData(tempLvlData);
             }
-            foreach (XmlElement nFarmer in xmlDoc.SelectNodes(Defines.NodeAnimalData))
+            foreach (XmlElement nFarmer in xmlDoc.SelectNodes(Defines.NodeFarmerData))
             {
-                tempLvlData.FarmerAmount = int.Parse(nFarmer.GetAttribute(Defines.Amount));
-
+                tempLvlData.FarmerAmount = int.Parse(nFarmer.SelectSingleNode(Defines.Amount).InnerText);
             }
             foreach (XmlElement nAnimal in xmlDoc.SelectNodes(Defines.NodeAnimalData))
             {
                 AnimalData tempAnimal = new AnimalData();
                 tempAnimal.AnimalId = int.Parse(nAnimal.GetAttribute(Defines.Id));
-                tempAnimal.AnimalAmount =int.Parse(nAnimal.GetAttribute(Defines.Amount));
+                tempAnimal.name = nAnimal.SelectSingleNode(Defines.Name).InnerText;
+                tempAnimal.AnimalAmount = int.Parse(nAnimal.SelectSingleNode(Defines.Amount).InnerText);
                 tempLvlData.Animals.Add(tempAnimal);
             }
-            foreach (XmlElement nAnimal in xmlDoc.SelectNodes(Defines.NodeObstacleData))
+            foreach (XmlElement nObstacle in xmlDoc.SelectNodes(Defines.NodeObstacleData))
             {
                 ObstacleData tempObstacle = new ObstacleData();
-                tempObstacle.ObstacleId = int.Parse(nAnimal.GetAttribute(Defines.Id));
-                tempObstacle.ObstAmount =int.Parse(nAnimal.GetAttribute(Defines.Amount));
+                tempObstacle.ObstacleId = int.Parse(nObstacle.GetAttribute(Defines.Id));
+                tempObstacle.name = nObstacle.SelectSingleNode(Defines.Name).InnerText;
+                tempObstacle.ObstAmount = int.Parse(nObstacle.SelectSingleNode(Defines.Amount).InnerText);
                 tempLvlData.Obstacles.Add(tempObstacle);
             }
             foreach (XmlElement nPrefab in xmlDoc.SelectNodes(Defines.NodeAnimalData))
@@ -133,9 +139,13 @@ public class XMLParser : MonoBehaviour
     {
         fileName = "LevelDataFile";
         LevelsData = new List<LevelData>();
+
         loadXMLFromAssest();
         readXml();
-        return LevelsData;
+        if (LevelsData.Count > 0)
+            return LevelsData;
+        else
+            return null;
     }
 
     //private void displayPlayeData(LevelData tempPlayer)

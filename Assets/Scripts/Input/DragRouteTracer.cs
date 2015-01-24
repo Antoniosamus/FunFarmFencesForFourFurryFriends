@@ -1,4 +1,7 @@
-﻿using System;
+﻿#if DEBUG
+#define DEBUG_ROUTE
+#endif
+
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,56 +9,160 @@ using UnityEngine;
 /// <summary>
 /// 
 /// </summary>
-public class DragRouteTracer : MonoBehaviour, IRouteTracer
+public class DragRouteTracer : RouteTracer, IRouteTracer
 {
-  private Vector3 dist;
-  private float posX;
-  private float posY;
+  #region RouteTracer
+
+  private Queue<Vector2> _lastRoute = new Queue<Vector2>();
+
+  public override Queue<Vector2> LastRoute{ get { return _lastRoute; } }
+
+  private  bool _isRouting;
+  public override bool IsRouting { get { return _isRouting; } }
+  #endregion
+
+  //-------------------------------------------------------------
+
+  private Vector2 _lastScreenPosition;
+  private Vector2 _clickOffsset;
+
+  [SerializeField]
+  private float _stepDistanceMinSqr = 1f;
+
+  
 
 
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   //////////////////////////////////////////////////////////////////
 
 
+  #region MONO
+  private void OnDestroy()
+  {
+    _lastRoute = null;
+  }
+  #endregion
+
+  //=============================================================
+
   #region Mouse Events
 
-  void OnMouseDown()
+  private void OnMouseDown()
   {
-    dist = Camera.main.WorldToScreenPoint(transform.position);
-    posX = Input.mousePosition.x - dist.x;
-    posY = Input.mousePosition.y - dist.y;
+    _lastScreenPosition = WorldToScreenPoint(transform.position);
+    _clickOffsset = (Vector2) Input.mousePosition - _lastScreenPosition;
   }
 
   //------------------------------------------------------------------------
 
-  void OnMouseDrag()
+  private void OnMouseDrag()
   {
-    Vector3 curPos =
-              new Vector3(Input.mousePosition.x - posX,
-              Input.mousePosition.y - posY, dist.z);
+    Vector2 currentScreenPosition = (Vector2) Input.mousePosition - _clickOffsset;
 
-    Vector3 worldPos = Camera.main.ScreenToWorldPoint(curPos);
-    transform.position = worldPos;
+    if ((currentScreenPosition - _lastScreenPosition).sqrMagnitude > _stepDistanceMinSqr)
+    {
+      if (!_isRouting) 
+        RouteStart( ScreenToWorldPoint(_lastScreenPosition) );
+      
+      RouteStay( ScreenToWorldPoint(currentScreenPosition) );
+      _lastScreenPosition = currentScreenPosition;
+    }
+  }
+
+  //-----------------------------------------------------------------------------
+
+  private void OnMouseUp()
+  {
+    if(_isRouting)
+      RouteStop(_lastRoute);
+    else 
+      RouteCancel();
+  }
+  #endregion
+
+
+  //==================================================================
+
+
+  #region RouteTracer
+
+  protected override void RouteStart(Vector2 startPosition)
+  {
+    #if DEBUG_ROUTE
+    Debug.Log("<b>DragRouteTracer::RouteStart</b>", gameObject);
+    #endif
+
+    _isRouting = true;
+    _lastRoute.Clear();
+    _lastRoute.Enqueue(startPosition);
+    base.RouteStart(startPosition);
+  }
+
+  //------------------------------------------
+
+  protected override void RouteStay(Vector2 currentPostion)
+  {
+    #if DEBUG_ROUTE
+    Debug.Log("<b>DragRouteTracer::RouteStay</b>", gameObject);
+    #endif
+
+    _lastRoute.Enqueue(currentPostion);
+    base.RouteStay(currentPostion);
+  }
+  //------------------------------------------
+
+  protected override void RouteStop(Queue<Vector2> route)
+  {
+    #if DEBUG_ROUTE
+    Debug.Log("<b>DragRouteTracer::RouteStop</b>", gameObject);
+    #endif
+
+    _isRouting = false;
+    base.RouteStop(route);
+  }
+
+  //------------------------------------------
+
+  protected override void RouteCancel()
+  {
+    #if DEBUG_ROUTE
+    Debug.Log("<b>DragRouteTracer::RouteCancel</b>", gameObject);
+    #endif
+
+    _isRouting = false;
+    _lastRoute.Clear();
+    base.RouteCancel();
   }
 
   #endregion
 
-  //======================================================================
+
+  //========================================================
 
 
-  #region IRouteTracer
-  public event Action<Vector3> OnRouteStart;
-  public event Action<Queue<Vector3>> OnRouteStop;
-  public event Action<Vector3> OnRouteStay;
-  public event Action OnRouteCancel;
-
-  public Queue<Vector3> LastRoute
+  #region AUX
+  private Vector2 ScreenToWorldPoint(Vector2 screenPoint)
   {
-    get { throw new System.NotImplementedException(); }
+    return Camera.main.ScreenToWorldPoint(screenPoint);
   }
-
+  //--------------------------------------------------
+  private Vector2 WorldToScreenPoint(Vector2 worldPoint)
+  {
+    return Camera.main.WorldToScreenPoint(worldPoint);
+  }
   #endregion
 
- 
 
+  
 }
+
+
+
+
+
+
+
+
+
+
+  

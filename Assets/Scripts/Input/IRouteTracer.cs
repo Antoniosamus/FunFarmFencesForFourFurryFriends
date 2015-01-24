@@ -10,6 +10,7 @@ public interface IRouteTracer
   event Action OnRouteCancel;                 // Cancelación de la ruta
 
   Queue<Vector2> LastRoute { get; } // Ruta trazada
+  bool IsRouting {get;}
 }
 
 

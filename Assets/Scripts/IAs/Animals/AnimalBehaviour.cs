@@ -16,27 +16,26 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	#region Inicialization
 
-  void Awake() 
-  {
-      if (runner == null)
-          runner = GetComponent<Runner>();
-  }
+    void Awake() 
+    {
+        if (runner == null)
+            runner = GetComponent<Runner>();
+    }
 
-	void Start()
-	{
+    void Start()
+    {
         Initialize<States>();
         ChangeState(States.Hunt);
-	}
+    }
 
-  void OnEnable()
-  {
-    if(runner != null)
-      runner.OnRouteInterrupt += go => Debug.Log(name);
-  }
+    void OnEnable()
+    {
+        runner.OnRouteInterrupt += OnRunnerRouteInterrupt;
+    }
 
 	void OnDisable()
 	{
-		//runner.OnRouteInterrupt -= OnRunnerRouteInterrupt;
+		runner.OnRouteInterrupt -= OnRunnerRouteInterrupt;
 	}
 	
 	#endregion
@@ -45,6 +44,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	private void OnRunnerRouteInterrupt(GameObject other)
 	{
+        //Debug.Log(name + " reached " + other.name);
 		string collisionName = LayerMask.LayerToName(other.layer);
 		
 		//Esto es un ñordo pero bueno

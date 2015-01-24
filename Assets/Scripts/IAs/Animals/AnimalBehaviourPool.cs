@@ -10,17 +10,19 @@ using System.Collections.Generic;
 // objects to avoid calls to Instantiate during gameplay. Can
 // also create objects on demand (which it does if no objects
 // are available in the pool).
-public class GameObjectPool
-{
-    // The prefab that the game objects will be instantiated from.
-    public GameObject[] prefabs;
 
-    // The list of available game objects (initially empty by default).
-    public Stack available;
+[System.Serializable]
+public class AnimalBehaviourPool
+{
+
+    // The prefab that the game objects will be instantiated from.
+    [SerializeField]
+    private GameObject[] prefabs;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    private List<GameObject> all;
+    [HideInInspector]
+    public List<AnimalBehaviour> all;
 
     // An optional function that will be called whenever a new object is instantiated.
     // The newly instantiated object is passed to it, which allows users of the pool
@@ -34,46 +36,66 @@ public class GameObjectPool
     // If an initialCapacity that is <= to zero is provided, the pool uses the default
     // initial capacities of its internal .NET collections.
     //function GameObjectPool(prefab : GameObject, initialCapacity : int, initializationFunction : Function, setActiveRecursively : boolean){
-    public GameObjectPool(GameObject[] prefabs, int initialCapacity)
+    public AnimalBehaviourPool(int initialCapacity)
     {
-        this.prefabs = prefabs;
         if (initialCapacity > 0)
-        {
-            this.available = new Stack(initialCapacity);
-            this.all = new List<GameObject>(initialCapacity);
-        }
+            this.all = new List<AnimalBehaviour>(initialCapacity);
         else
-        {
-            // Use the .NET defaults
-            this.available = new Stack();
-            this.all = new List<GameObject>();
-        }
-        //this.initializationFunction = initializationFunction;
+            this.all = new List<AnimalBehaviour>();
     }
 
-   private GameObject GetRamdomPrefab()
-   {
-       return prefabs[Random.Range( 0, prefabs.Count())];
-   }
+    public GameObject GetRamdomPrefab() 
+    {
+        return prefabs[Random.Range(0, prefabs.Length - 1)];
+    }
 
-    // Spawn a game object with the specified position/rotation.
-    public GameObject Spawn(Vector3 position, Quaternion rotation)
+    public void Add(AnimalBehaviour animal, Vector3 position, Quaternion rotation) 
     {
         GameObject result;
 
-        if (available.Count == 0)
+        if (all.Count == 0)
         {
-            // Create an object and initialize it.
-            result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
-            //if(initializationFunction != null){
-            //	initializationFunction(result);
-            //}
-            // Keep track of it.
-            all.Add(result);
+            if (animal != null) all.Add(animal);
+            else Debug.LogError("Prefab " + animal.gameObject.name + " no tiene componente AnimalBehaviour");
         }
         else
         {
-            result = available.Pop() as GameObject;
+            result = all.First().gameObject;
+
+            foreach (ParticleSystem ps in result.GetComponentsInChildren<ParticleSystem>())
+                ps.Clear(true);
+            foreach (TrailRenderer trail in result.GetComponentsInChildren<TrailRenderer>())
+                trail.time = 0.0f;
+
+            // Get the result's transform and reuse for efficiency.
+            // Calling gameObject.transform is expensive.
+            var resultTrans = result.transform;
+            resultTrans.position = position;
+            resultTrans.rotation = rotation;
+
+            this.SetActive(result, true);
+        }
+
+        Sort();
+    }
+
+    // Spawn a game object with the specified position/rotation.
+    public GameObject RandomSpawn(Vector3 position, Quaternion rotation)
+    {
+        GameObject result;
+
+        if (all.Count == 0)
+        {
+            // Create an object and initialize it.
+            result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
+            var av = result.GetComponent<AnimalBehaviour>();
+
+            if (av != null) all.Add(av);
+            else Debug.LogError("Prefab " + result.name + " no tiene componente AnimalBehaviour");
+        }
+        else
+        {
+            result = all.First().gameObject;
 
             foreach (ParticleSystem ps in result.GetComponentsInChildren<ParticleSystem>())
                 ps.Clear(true);
@@ -95,12 +117,12 @@ public class GameObjectPool
     // The function is idempotent. Calling it more than once for the same game object is
     // safe, since it first checks to see if the provided object is already unspawned.
     // Returns true if the unspawn succeeded, false if the object was already unspawned.
-    public bool Unspawn(GameObject obj)
+    public bool Unspawn(AnimalBehaviour obj)
     {
-        if (!available.Contains(obj))
+        if (!all.Contains(obj))
         { // Make sure we don't insert it twice.
-            available.Push(obj);
-            this.SetActive(obj, false);
+            all.Add(obj);
+            this.SetActive(obj.gameObject, false);
             return true; // Object inserted back in stack.
         }
         return false; // Object already in stack.
@@ -112,13 +134,17 @@ public class GameObjectPool
         GameObject[] array = new GameObject[count];
         for (var i = 0; i < count; i++)
         {
-            array[i] = Spawn(Vector3.zero, Quaternion.identity);
+            array[i] = RandomSpawn(Vector3.zero, Quaternion.identity);
             this.SetActive(array[i], false);
         }
         for (var j = 0; j < count; j++)
         {
-            Unspawn(array[j]);
+            var av = array[j].GetComponent<AnimalBehaviour>();
+            if (av != null) Unspawn(av);
+            else Debug.LogError("Prefab " + av.gameObject.name + " no tiene componente AnimalBehaviour");
         }
+
+        Sort();
     }
 
     // Unspawns all the game objects created by the pool.
@@ -126,8 +152,8 @@ public class GameObjectPool
     {
         for (var i = 0; i < all.Count; i++)
         {
-            GameObject obj = all[i] as GameObject;
-            if (obj.activeInHierarchy)
+            AnimalBehaviour obj = all[i];
+            if (obj.gameObject.activeInHierarchy)
                 Unspawn(obj);
         }
     }
@@ -136,20 +162,7 @@ public class GameObjectPool
     public void Clear()
     {
         UnspawnAll();
-        available.Clear();
         all.Clear();
-    }
-
-    // Returns the number of active objects.
-    public int GetActiveCount()
-    {
-        return all.Count - available.Count;
-    }
-
-    // Returns the number of available objects.
-    public int GetAvailableCount()
-    {
-        return available.Count;
     }
 
     // Returns the prefab being used by this pool.
@@ -158,21 +171,20 @@ public class GameObjectPool
         return prefabs;
     }
 
-    // Applies the provided function to some or all of the pool's game objects.
-    //public void ForEach(func : Function, activeOnly : boolean)
-    //{
-    //    for(var i = 0; i < all.Count; i++){
-    //        var obj : GameObject = all[i] as GameObject;
-    //        if(!activeOnly || obj.active){
-    //            func(obj);
-    //        }
-    //    }
-    //}
-
     // Activates or deactivates the provided game object using the method
     // specified by the setActiveRecursively flag.
     private void SetActive(GameObject obj, bool val)
     {
         obj.SetActive(val);
+    }
+
+    private void Sort()
+    {
+        all.OrderBy(x => x.FoodChainLevel);
+    }
+
+    public void ForceSort()
+    {
+        Sort();
     }
 }

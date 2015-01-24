@@ -5,13 +5,13 @@ using UnityEngine;
 public abstract class RouteTracer : MonoBehaviour, IRouteTracer
 {
   #region IRouteTracer
-  public event Action<Vector3> OnRouteStart;
-  public event Action<Queue<Vector3>> OnRouteStop;
-  public event Action<Vector3> OnRouteStay;
+  public event Action<Vector2> OnRouteStart;
+  public event Action<Queue<Vector2>> OnRouteStop;
+  public event Action<Vector2> OnRouteStay;
   public event Action OnRouteCancel;
 
-  public abstract Queue<Vector3> LastRoute { get; }
-
+  public abstract Queue<Vector2> LastRoute { get; }
+  public abstract bool IsRouting { get; }
   #endregion
 
 
@@ -22,27 +22,27 @@ public abstract class RouteTracer : MonoBehaviour, IRouteTracer
 
   #region EVENTS
 
-  protected virtual void RouteStart(Vector3 startPostion)
+  protected virtual void RouteStart(Vector2 startPosition)
   {
-    Action<Vector3> e = OnRouteStart;
+    Action<Vector2> e = OnRouteStart;
     if (e != null)
-      e(startPostion);
+      e(startPosition);
   }
 
   //------------------------------------------------------------------------
 
-  protected virtual void RouteStay(Vector3 currentPostion)
+  protected virtual void RouteStay(Vector2 currentPostion)
   {
-    Action<Vector3> e = OnRouteStay;
+    Action<Vector2> e = OnRouteStay;
     if (e != null)
       e(currentPostion);
   }
 
   //------------------------------------------------------------------------
 
-  protected virtual void RouteStop(Queue<Vector3> route)
+  protected virtual void RouteStop(Queue<Vector2> route)
   {
-    Action<Queue<Vector3>> e = OnRouteStop;
+    Action<Queue<Vector2>> e = OnRouteStop;
     if (e != null)
       e(route);
   }
@@ -59,6 +59,9 @@ public abstract class RouteTracer : MonoBehaviour, IRouteTracer
 
 
   #endregion
+
+
+
 
 
   

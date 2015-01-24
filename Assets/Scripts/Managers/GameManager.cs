@@ -5,7 +5,7 @@ public class GameManager : Singleton<GameManager> {
 
 	// Use this for initialization
 	void Awake () {
-        IAManager.Instance.Inizialize(4);
+        IAManager.Instance.Inizialize(100);
 	}
 	
 	// Update is called once per frame

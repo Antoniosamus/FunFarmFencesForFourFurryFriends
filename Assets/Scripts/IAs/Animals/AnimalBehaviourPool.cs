@@ -11,16 +11,13 @@ using System.Collections.Generic;
 // also create objects on demand (which it does if no objects
 // are available in the pool).
 
-[System.Serializable]
 public class AnimalBehaviourPool
 {
     // The prefab that the game objects will be instantiated from.
-    [SerializeField]
     private GameObject[] prefabs;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    [HideInInspector]
     public List<AnimalBehaviour> all;
 
     // An optional function that will be called whenever a new object is instantiated.
@@ -35,17 +32,21 @@ public class AnimalBehaviourPool
     // If an initialCapacity that is <= to zero is provided, the pool uses the default
     // initial capacities of its internal .NET collections.
     //function GameObjectPool(prefab : GameObject, initialCapacity : int, initializationFunction : Function, setActiveRecursively : boolean){
-    public AnimalBehaviourPool(int initialCapacity)
+    public AnimalBehaviourPool(GameObject[] _prefabs, int initialCapacity)
     {
+        prefabs = _prefabs;
+
         if (initialCapacity > 0)
             this.all = new List<AnimalBehaviour>(initialCapacity);
         else
             this.all = new List<AnimalBehaviour>();
+
+        PrePopulate(initialCapacity);
     }
 
     public GameObject GetRamdomPrefab() 
     {
-        return prefabs[Random.Range(0, prefabs.Length - 1)];
+        return prefabs[Random.Range(0, prefabs.Length)];
     }
 
     public void Add(AnimalBehaviour animal, Vector3 position, Quaternion rotation) 
@@ -81,18 +82,12 @@ public class AnimalBehaviourPool
     // Spawn a game object with the specified position/rotation.
     public GameObject RandomSpawn(Vector3 position, Quaternion rotation)
     {
-        GameObject result;
+        // Create an object and initialize it.
+         GameObject result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
+        var av = result.GetComponent<AnimalBehaviour>();
+        //this.SetActive(result, true);
 
-        if (all.Count == 0)
-        {
-            // Create an object and initialize it.
-            result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
-            var av = result.GetComponent<AnimalBehaviour>();
-
-            if (av != null) all.Add(av);
-            else Debug.LogError("Prefab " + result.name + " no tiene componente AnimalBehaviour");
-        }
-        else
+        if(all.Count > 0)
         {
             result = all.First().gameObject;
 
@@ -106,9 +101,13 @@ public class AnimalBehaviourPool
             var resultTrans = result.transform;
             resultTrans.position = position;
             resultTrans.rotation = rotation;
-
-            this.SetActive(result, true);
         }
+
+
+
+        if (av != null) all.Add(av);
+        else Debug.LogError("Prefab " + result.name + " no tiene componente AnimalBehaviour");
+
         return result;
     }
 
@@ -134,13 +133,7 @@ public class AnimalBehaviourPool
         for (var i = 0; i < count; i++)
         {
             array[i] = RandomSpawn(Vector3.zero, Quaternion.identity);
-            this.SetActive(array[i], false);
-        }
-        for (var j = 0; j < count; j++)
-        {
-            var av = array[j].GetComponent<AnimalBehaviour>();
-            if (av != null) Unspawn(av);
-            else Debug.LogError("Prefab " + av.gameObject.name + " no tiene componente AnimalBehaviour");
+            this.SetActive(array[i], true);
         }
 
         Sort();

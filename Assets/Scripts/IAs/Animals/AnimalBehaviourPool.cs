@@ -14,7 +14,6 @@ using System.Collections.Generic;
 [System.Serializable]
 public class AnimalBehaviourPool
 {
-
     // The prefab that the game objects will be instantiated from.
     [SerializeField]
     private GameObject[] prefabs;

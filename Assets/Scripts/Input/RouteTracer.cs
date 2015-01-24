@@ -31,11 +31,11 @@ public abstract class RouteTracer : MonoBehaviour, IRouteTracer
 
   //------------------------------------------------------------------------
 
-  protected virtual void RouteStay(Vector2 currentPostion)
+  protected virtual void RouteStay(Vector2 currentPosition)
   {
     Action<Vector2> e = OnRouteStay;
     if (e != null)
-      e(currentPostion);
+      e(currentPosition);
   }
 
   //------------------------------------------------------------------------

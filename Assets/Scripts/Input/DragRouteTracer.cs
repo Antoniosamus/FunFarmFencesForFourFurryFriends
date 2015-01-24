@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-#define DEBUG_ROUTE
+//#define DEBUG_ROUTE
 #endif
 
 using System.Collections.Generic;
@@ -23,8 +23,8 @@ public class DragRouteTracer : RouteTracer, IRouteTracer
 
   //-------------------------------------------------------------
 
-  private Vector2 _lastScreenPosition;
-  private Vector2 _clickOffsset;
+  private Vector3 _lastScreenPosition;
+  private Vector3 _clickOffsset;
 
   [SerializeField]
   private float _stepDistanceMinSqr = 1f;
@@ -50,20 +50,19 @@ public class DragRouteTracer : RouteTracer, IRouteTracer
   private void OnMouseDown()
   {
     _lastScreenPosition = WorldToScreenPoint(transform.position);
-    _clickOffsset = (Vector2) Input.mousePosition - _lastScreenPosition;
+    _clickOffsset = Input.mousePosition - _lastScreenPosition;
   }
 
   //------------------------------------------------------------------------
 
   private void OnMouseDrag()
   {
-    Vector2 currentScreenPosition = (Vector2) Input.mousePosition - _clickOffsset;
-
+    Vector3 currentScreenPosition = Input.mousePosition - _clickOffsset;
     if ((currentScreenPosition - _lastScreenPosition).sqrMagnitude > _stepDistanceMinSqr)
     {
       if (!_isRouting) 
         RouteStart( ScreenToWorldPoint(_lastScreenPosition) );
-      
+    
       RouteStay( ScreenToWorldPoint(currentScreenPosition) );
       _lastScreenPosition = currentScreenPosition;
     }
@@ -100,14 +99,17 @@ public class DragRouteTracer : RouteTracer, IRouteTracer
 
   //------------------------------------------
 
-  protected override void RouteStay(Vector2 currentPostion)
+  protected override void RouteStay(Vector2 currentPosition)
   {
+    //transform.position = currentPosition;
     #if DEBUG_ROUTE
-    Debug.Log("<b>DragRouteTracer::RouteStay</b>", gameObject);
+    Debug.Log("<b>DragRouteTracer::RouteStay>> </b> " + currentPosition, gameObject);
     #endif
 
-    _lastRoute.Enqueue(currentPostion);
-    base.RouteStay(currentPostion);
+    _lastRoute.Enqueue(currentPosition);
+    base.RouteStay(currentPosition);
+
+
   }
   //------------------------------------------
 
@@ -128,7 +130,6 @@ public class DragRouteTracer : RouteTracer, IRouteTracer
     #if DEBUG_ROUTE
     Debug.Log("<b>DragRouteTracer::RouteCancel</b>", gameObject);
     #endif
-
     _isRouting = false;
     _lastRoute.Clear();
     base.RouteCancel();
@@ -141,12 +142,12 @@ public class DragRouteTracer : RouteTracer, IRouteTracer
 
 
   #region AUX
-  private Vector2 ScreenToWorldPoint(Vector2 screenPoint)
+  private Vector3 ScreenToWorldPoint(Vector3 screenPoint)
   {
     return Camera.main.ScreenToWorldPoint(screenPoint);
   }
   //--------------------------------------------------
-  private Vector2 WorldToScreenPoint(Vector2 worldPoint)
+  private Vector3 WorldToScreenPoint(Vector3 worldPoint)
   {
     return Camera.main.WorldToScreenPoint(worldPoint);
   }

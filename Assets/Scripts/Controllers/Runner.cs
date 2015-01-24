@@ -2,52 +2,60 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
+[ExecuteInEditMode(), RequireComponent(typeof(Rigidbody2D), typeof(CircleCollider2D))]
 public class Runner : MonoBehaviour
 {
+  #region Compos
+  private CircleCollider2D _nextRoutePoint;
+   private CircleCollider2D _runnerCollider;
+  #endregion
+
+  //-------------------------------------------------
+  #region Events
+  public event Action<GameObject> OnRouteInterrupt;
+  public event Action OnTargetReach;
+  #endregion
+
+  //------------------------------
+
+  private const float RoutePointRadius = 0.01f;
+  private float _targetDistanceMinSqr;
+
 	[SerializeField] 
   Vector2 forwardDirection;
   [SerializeField]
   private float _angularVelocityAbs = 3;
   [SerializeField]
   private float _linearVelocityAbs = 3;
-
-	public event Action<GameObject> OnRouteInterrupt;
-  public event Action OnTargetReach;
-
+ 
   //------------------------------------------------------
 
   private Vector2 _target;
-	public Vector2 Target { 
+	public Vector2 Target 
+  { 
     get { return _target; }
-    set {
-      if(value != _target) {
+    set 
+    {
+      if( (value - _target).sqrMagnitude < _targetDistanceMinSqr) 
+      {
+        TargetReach();
+      }
+      else 
+      {
         _isFollowingTarget = true;
         _target = value;
-        NextRoutePoint.transform.position = _target;
+
+        if(_nextRoutePoint == null) {
+          _nextRoutePoint = new GameObject(name + "RoutePoint").AddComponent<CircleCollider2D>();
+          _nextRoutePoint.radius = RoutePointRadius;
+          _nextRoutePoint.isTrigger = true;
+        }
+        _nextRoutePoint.transform.position = _target;
       }
     }
   }
   private bool _isFollowingTarget;
-
-  //------------------------------------------------
-
-  private const float RoutePointRadius = 0.01f;
-  private CircleCollider2D _nextRoutePoint;
-  private CircleCollider2D NextRoutePoint {
-    get {
-      if(_nextRoutePoint == null) {
-        _nextRoutePoint = new GameObject(name + "RoutePoint").AddComponent<CircleCollider2D>();
-        _nextRoutePoint.radius = RoutePointRadius;
-        _nextRoutePoint.isTrigger = true;
-      }
-      return _nextRoutePoint;
-    }
-  }
-
-
-
-
+ 
 
 
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -58,22 +66,34 @@ public class Runner : MonoBehaviour
 
   #region MONO
 
-  public void Awake()
+  private void  Awake()
   {
     rigidbody2D.isKinematic = false;
     rigidbody2D.gravityScale = 0f;
+    _runnerCollider = (collider2D as CircleCollider2D);
+    _targetDistanceMinSqr = (float) Math.Pow(_runnerCollider.radius + RoutePointRadius, 2);
+  }
+
+  //--------------------------------
+
+  private void OnDestroy()
+  {
+     _runnerCollider = null;
+     _nextRoutePoint = null;
+     OnRouteInterrupt = null;
+     OnTargetReach = null;
   }
 
   //-------------------------------------
 
-  public void OnEnable()
+  private void  OnEnable()
 	{
 	  // TODO
 	}
 
   //----------------------------------------------
 
-	void FixedUpdate()
+	private void FixedUpdate()
 	{
     if(!_isFollowingTarget)
       return;
@@ -89,7 +109,7 @@ public class Runner : MonoBehaviour
 
   private void OnTriggerEnter2D(Collider2D other) 
   {
-    if(other == NextRoutePoint)
+    if(other == _nextRoutePoint)
       TargetReach();
   }
   

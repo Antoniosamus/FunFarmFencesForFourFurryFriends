@@ -48,7 +48,6 @@ public class FarmerController : RouteFollower, IFarmerEvents
     base.OnEnable();
 		_runner.OnRouteInterrupt += OnRouteRouteInterrupt;
     _runner.OnTargetReach += OnRouteStepReach;
-		FollowRoute();
 	}
   //------------------------------------------------------
 
@@ -124,8 +123,8 @@ public class FarmerController : RouteFollower, IFarmerEvents
   // TODO Corrutina...? Mejorar bucles....
   public void FollowRoute()
 	{
-    while(_currentRoute.Count > 0 && _currentRoute.Peek() == _runner.Target)
-      _currentRoute.Dequeue();
+    //while(_currentRoute.Count > 0 && _currentRoute.Peek() == _runner.Target)
+    //  _currentRoute.Dequeue();
 
     if(_currentRoute.Count > 0)
 		  _runner.Target = _currentRoute.Dequeue();

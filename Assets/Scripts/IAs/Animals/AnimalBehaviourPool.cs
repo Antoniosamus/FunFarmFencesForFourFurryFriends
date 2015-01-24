@@ -116,10 +116,11 @@ public class AnimalBehaviourPool
     // Returns true if the unspawn succeeded, false if the object was already unspawned.
     public bool Unspawn(AnimalBehaviour obj)
     {
-        if (!all.Contains(obj))
+        if (all.Contains(obj))
         { // Make sure we don't insert it twice.
-            all.Add(obj);
-            this.SetActive(obj.gameObject, false);
+            all.Remove(obj);
+            //this.SetActive(obj.gameObject, false);
+            Object.Destroy(obj);
             return true; // Object inserted back in stack.
         }
         return false; // Object already in stack.

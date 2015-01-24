@@ -10,17 +10,15 @@ using System.Collections.Generic;
 // objects to avoid calls to Instantiate during gameplay. Can
 // also create objects on demand (which it does if no objects
 // are available in the pool).
-
-[System.Serializable]
-public class GameObjectPool
+public class AnimalBehaviourPool
 {
+
     // The prefab that the game objects will be instantiated from.
-    public  GameObject[] prefabs;
+    private GameObject[] prefabs;
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    [HideInInspector]
-    public List<AnimalBehaviour> all;
+    private List<AnimalBehaviour> all;
 
     // An optional function that will be called whenever a new object is instantiated.
     // The newly instantiated object is passed to it, which allows users of the pool
@@ -34,25 +32,18 @@ public class GameObjectPool
     // If an initialCapacity that is <= to zero is provided, the pool uses the default
     // initial capacities of its internal .NET collections.
     //function GameObjectPool(prefab : GameObject, initialCapacity : int, initializationFunction : Function, setActiveRecursively : boolean){
-    public GameObjectPool(GameObject[] prefabs, int initialCapacity)
+    public AnimalBehaviourPool(int initialCapacity)
     {
-        this.prefabs = prefabs;
         if (initialCapacity > 0)
-        {
             this.all = new List<AnimalBehaviour>(initialCapacity);
-        }
         else
-        {
-            // Use the .NET defaults
             this.all = new List<AnimalBehaviour>();
-        }
-        //this.initializationFunction = initializationFunction;
     }
 
-   private GameObject GetRamdomPrefab()
-   {
-       return prefabs[Random.Range( 0, prefabs.Count())];
-   }
+    public GameObject GetRamdomPrefab() 
+    {
+        return prefabs[Random.Range(0, prefabs.Length - 1)];
+    }
 
     // Spawn a game object with the specified position/rotation.
     public GameObject Spawn(Vector3 position, Quaternion rotation)
@@ -63,13 +54,10 @@ public class GameObjectPool
         {
             // Create an object and initialize it.
             result = GameObject.Instantiate(GetRamdomPrefab(), position, rotation) as GameObject;
-            //if(initializationFunction != null){
-            //	initializationFunction(result);
-            //}
-            // Keep track of it.
             var av = result.GetComponent<AnimalBehaviour>();
+
             if (av != null) all.Add(av);
-            else Debug.LogError("Has metido un prefab en la pool que no tiene AnimalBehaviour");
+            else Debug.LogError("Prefab " + result.name + " no tiene componente AnimalBehaviour");
         }
         else
         {
@@ -88,9 +76,6 @@ public class GameObjectPool
 
             this.SetActive(result, true);
         }
-
-        Sort();
-
         return result;
     }
 
@@ -122,11 +107,9 @@ public class GameObjectPool
         {
             var av = array[j].GetComponent<AnimalBehaviour>();
             if (av != null) Unspawn(av);
-            else Debug.LogError("Has metido un prefab en la pool que no tiene AnimalBehaviour");
-            
+            else Debug.LogError("Prefab " + av.gameObject.name + " no tiene componente AnimalBehaviour");
+           
         }
-
-        Sort();
     }
 
     // Unspawns all the game objects created by the pool.
@@ -147,12 +130,6 @@ public class GameObjectPool
         all.Clear();
     }
 
-    // Returns the number of available objects.
-    public int GetAvailableCount()
-    {
-        return all.Count;
-    }
-
     // Returns the prefab being used by this pool.
     public GameObject[] GetPrefab()
     {
@@ -164,15 +141,5 @@ public class GameObjectPool
     private void SetActive(GameObject obj, bool val)
     {
         obj.SetActive(val);
-    }
-
-    private void Sort()
-    {
-        all.OrderBy(x => x.FoodChainLevel);
-    }
-
-    public void ForceSort()
-    {
-        Sort();
     }
 }

@@ -16,20 +16,25 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	#region Inicialization
 
-	public void Start()
-	{
+    public void Awake() 
+    {
         if (runner == null)
             runner = GetComponent<Runner>();
+    }
 
-        runner.OnCollision += OnRunnerCollision;
-
+	public void Start()
+	{
         Initialize<States>();
         ChangeState(States.Hunt);
 	}
-	
+
+    public void OnEnable()
+    {
+        runner.OnCollision += OnRunnerCollision;
+    }
+
 	public void OnDisable()
 	{
-		//tracer.OnRouteStart -= HandleOnRouteStart;
 		runner.OnCollision -= OnRunnerCollision;
 	}
 	
@@ -83,25 +88,26 @@ public class AnimalBehaviour : StateMachineBehaviour
 		//Debug.Log("Hunt_Enter");
 		
 		//1. Look for the nearest animal to hunt
-		IAManager.Instance.GetNearestToMe(this);
+        IAManager.Instance.GetNearestToMe(this);
 		
-		if (AnimalToHunt != null) Target = AnimalToHunt.transform.position;
+        if (AnimalToHunt != null) Target = AnimalToHunt.transform.position;
 		
-		if (Target == Vector3.zero) ChangeState(States.Pasture);
+        if (Target == Vector3.zero) ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Update()
 	{
-		//Debug.Log("Hunt_Update");
-		
-		//1. Look at the target and walk 
-		if (AnimalToHunt != null) 
-		{
-			Target = AnimalToHunt.transform.position;
-			runner.Target = Target;
-		}
-		
-		/*if (Target == Vector3.zero)*/ ChangeState(States.Pasture);
+        //Debug.Log("Hunt_Update");
+
+        //1. Look at the target and walk 
+        if (AnimalToHunt != null)
+        {
+            Target = AnimalToHunt.transform.position;
+            runner.Target = Target;
+        }
+
+        /*if (Target == Vector3.zero)*/
+        ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Exit()

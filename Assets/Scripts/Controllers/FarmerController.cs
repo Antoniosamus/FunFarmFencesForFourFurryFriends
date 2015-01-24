@@ -8,14 +8,14 @@ public class FarmerController : MonoBehaviour {
 
 
 	[SerializeField] List<GameObject> points;
-	[SerializeField] private Queue<Vector2> route;
+	[SerializeField] private Queue<Vector3> route;
 	//IRouteTracer tracer; 
 	Runner runner;
 
-	public delegate void CollideWithObstacle(Collision2D collision);
+	public delegate void CollideWithObstacle(Collider2D collision);
 	public event CollideWithObstacle OnCollideWithObstacle;
 
-	public delegate void CollideWithWayPoint(Collision2D collision);
+	public delegate void CollideWithWayPoint(Collider2D collision);
 	public event CollideWithWayPoint OnCollideWithWayPoint;
 
 	[SerializeField] GameObject pointPrefab;
@@ -27,11 +27,12 @@ public class FarmerController : MonoBehaviour {
 			runner = GetComponent<Runner>();
 		}
 
-		route = new Queue<Vector2> ();
+		route = new Queue<Vector3> ();
 		foreach (GameObject vector in points) 
 		{
 			//Instantiate(pointPrefab, vector, Quaternion.identity);
 			Vector2 vectorAux = (Vector2)vector.transform.position;
+			vector.GetComponent<WayPoint>().Owner = runner;
 			route.Enqueue(vectorAux);
 		}
 	}
@@ -51,9 +52,10 @@ public class FarmerController : MonoBehaviour {
 	
 	public void FollowRoute ()
 	{
-		Debug.Log ("Hello");
+		Debug.Log (route.Count);
 
-		GoToNextPoint (route.Dequeue());
+		Vector3 direction = route.Dequeue();
+		GoToNextPoint (direction);
 	}
 
 	public void GoToNextPoint(Vector3 point)
@@ -61,9 +63,9 @@ public class FarmerController : MonoBehaviour {
 		runner.GoToNextPoint (point);
 	}
 
-	private void OnRunnerCollision (Collision2D collision)
+	private void OnRunnerCollision (Collider2D collision)
 	{
-		string collisionName = LayerMask.LayerToName (collision.collider.gameObject.layer);
+		string collisionName = LayerMask.LayerToName (collision.gameObject.layer);
 
 		if (collisionName == "Obstacle") 
 		{
@@ -71,6 +73,8 @@ public class FarmerController : MonoBehaviour {
 			{
 				OnCollideWithObstacle(collision);
 			}
+			route.Clear ();
+
 		}
 		else if (collisionName == "Waypoint")
 			{
@@ -82,8 +86,6 @@ public class FarmerController : MonoBehaviour {
 				}
 			}
 
-
-		route.Clear ();
 	}
 
 	private void HandleOnRouteStart (Vector3 obj)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
@@ -12,6 +13,7 @@ public class Runner : MonoBehaviour
   private float _linearVelocityAbs = 3;
 
 	public event CollisionHandler OnCollision;
+  public event Action OnTargetReach;
 
   //------------------------------------------------------
 
@@ -20,27 +22,38 @@ public class Runner : MonoBehaviour
     get { return _target; }
     set {
       if(value != _target) {
-        NextRoutePoint.transform.position = _target;
+        _isFollowingTarget = true;
         _target = value;
+        NextRoutePoint.transform.position = _target;
       }
     }
   }
-  
+  private bool _isFollowingTarget;
+
   //------------------------------------------------
 
-  private RoutePoint _nextRoutePoint;
-  private RoutePoint NextRoutePoint {
+  private const float RoutePointRadius = 0.01f;
+  private CircleCollider2D _nextRoutePoint;
+  private CircleCollider2D NextRoutePoint {
     get {
       if(_nextRoutePoint == null) {
-        _nextRoutePoint = new GameObject().AddComponent<RoutePoint>();
-        _nextRoutePoint.collider2D.isTrigger = true;
+        _nextRoutePoint = new GameObject(name + "RoutePoint").AddComponent<CircleCollider2D>();
+        _nextRoutePoint.radius = RoutePointRadius;
+        _nextRoutePoint.isTrigger = true;
       }
       return _nextRoutePoint;
     }
   }
 
+
+
+
+
+
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   /////////////////////////////////////////////////////////////
+
+
 
 
   #region MONO
@@ -62,6 +75,9 @@ public class Runner : MonoBehaviour
 
 	void FixedUpdate()
 	{
+    if(!_isFollowingTarget)
+      return;
+
 		Vector3 direction = Target - transform.position;
 		float reorientation = Vector3.Cross(forwardDirection, direction).z;
 
@@ -73,20 +89,41 @@ public class Runner : MonoBehaviour
 
   private void OnTriggerEnter2D(Collider2D other) 
   {
-    Debug.Log(name);
-    OnCollision(other.gameObject);
-
+    if(other == NextRoutePoint)
+      TargetReach();
   }
+  
   //-----------------------------------------
 
   private void OnCollisionEnter2D(Collision2D other)
   {
-    OnCollision(other.collider.gameObject);
+    Collision(other.collider.gameObject);
   }
 
   #endregion
 
   //=============================================================================
+
+  #region EVENTS
+  protected virtual void TargetReach()
+  {
+    _isFollowingTarget = false;
+    rigidbody2D.velocity = Vector2.zero;
+    rigidbody2D.angularVelocity = 0f;
+
+    Action e = OnTargetReach;
+    if(e != null)
+      e();
+  }
+
+  //----------------------------------------------
+  protected virtual void Collision(GameObject other)
+  {
+    CollisionHandler e = OnCollision;
+    if(e != null)
+      e(other);
+  }
+  #endregion
 
 
   //public void CollisionWith(RoutePoint routePoint)

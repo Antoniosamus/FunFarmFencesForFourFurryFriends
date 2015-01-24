@@ -33,24 +33,24 @@ public abstract class RouteFollower : MonoBehaviour
 
   protected virtual void OnEnable()
   {
-    if(_routeTracer != null) {
-      _routeTracer.OnRouteStart  += OnRouteStart;
-      _routeTracer.OnRouteStay   += OnRouteStay;
-      _routeTracer.OnRouteStop   += OnRouteStop;
-      _routeTracer.OnRouteCancel += OnRouteCancel;
-    }
+    if (_routeTracer == null) 
+      return;
+    _routeTracer.OnRouteStart  += OnRouteStart;
+    _routeTracer.OnRouteStay   += OnRouteStay;
+    _routeTracer.OnRouteStop   += OnRouteStop;
+    _routeTracer.OnRouteCancel += OnRouteCancel;
   }
 
   //---------------------------------------------------------
 
   protected virtual void OnDisable()
   {
-    if(_routeTracer != null) {
-      _routeTracer.OnRouteStart  -= OnRouteStart;
-      _routeTracer.OnRouteStay   -= OnRouteStay;
-      _routeTracer.OnRouteStop   -= OnRouteStop;
-      _routeTracer.OnRouteCancel -= OnRouteCancel;
-    }
+    if (_routeTracer == null) 
+      return;
+    _routeTracer.OnRouteStart  -= OnRouteStart;
+    _routeTracer.OnRouteStay   -= OnRouteStay;
+    _routeTracer.OnRouteStop   -= OnRouteStop;
+    _routeTracer.OnRouteCancel -= OnRouteCancel;
   }
 
   #endregion
@@ -63,7 +63,6 @@ public abstract class RouteFollower : MonoBehaviour
   protected abstract void OnRouteStart(Vector2 startPosition);
   protected abstract void OnRouteStay(Vector2 currentPosition);
   protected abstract void OnRouteStop(Queue<Vector2> route);
-  
   protected abstract void OnRouteCancel();
   #endregion
 }

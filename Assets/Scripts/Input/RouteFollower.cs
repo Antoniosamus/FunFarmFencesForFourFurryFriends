@@ -11,16 +11,29 @@ public abstract class RouteFollower : MonoBehaviour
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   /////////////////////////////////////////////////////////
 
+  
   #region MONO
-  private void Awake()
+  protected virtual void Awake()
   {
     if(_routeTracer == null)
       _routeTracer = GetComponent( typeof(IRouteTracer) ) as IRouteTracer;
 
-    if(_routeTracer == null) {
+    if(_routeTracer == null) 
       Debug.LogError("<b>RouteFollower::Awake>> </b> RouteTracer not found!!", gameObject);
-    
-    } else {
+  }
+
+  //--------------------------------------------------------------
+
+  protected virtual void OnDestoy()
+  {
+    _routeTracer = null;
+  }
+
+  //------------------------------------------------------------
+
+  protected virtual void OnEnable()
+  {
+    if(_routeTracer != null) {
       _routeTracer.OnRouteStart  += OnRouteStart;
       _routeTracer.OnRouteStay   += OnRouteStay;
       _routeTracer.OnRouteStop   += OnRouteStop;
@@ -28,9 +41,21 @@ public abstract class RouteFollower : MonoBehaviour
     }
   }
 
-  
+  //---------------------------------------------------------
+
+  protected virtual void OnDisable()
+  {
+    if(_routeTracer != null) {
+      _routeTracer.OnRouteStart  -= OnRouteStart;
+      _routeTracer.OnRouteStay   -= OnRouteStay;
+      _routeTracer.OnRouteStop   -= OnRouteStop;
+      _routeTracer.OnRouteCancel -= OnRouteCancel;
+    }
+  }
 
   #endregion
+
+
 
   //================================================================
 

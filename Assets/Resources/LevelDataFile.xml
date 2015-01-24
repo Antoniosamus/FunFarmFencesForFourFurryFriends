@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LevelsData>
+  <LevelData id="1">
+    <Player id="1">
+      <name>Player1</name>
+      <score>0</score>
+    </Player>
+    <Farmers>
+      <Amount>1</Amount>
+    </Farmers>
+    <Animal id="1">
+      <Amount>2</Amount>
+    </Animal>
+    <Obstacle id="1">
+      <Amount>3</Amount>
+    </Obstacle>
+    <PrefabScene>
+      <name>Lvl1</name>
+    </PrefabScene>
+  </LevelData>
+  <LevelData id="2">
+    <Player id="1">
+      <name>Player1</name>
+      <score>0</score>
+    </Player>
+    <Farmers>
+      <Amount>2</Amount>
+    </Farmers>
+    <Animal id="1">
+      <Amount>2</Amount>
+    </Animal>
+    <Obstacle id="1">
+      <Amount>3</Amount>
+    </Obstacle>
+    <PrefabScene>
+      <name>Lvl2</name>
+    </PrefabScene>
+  </LevelData>
+</LevelsData>

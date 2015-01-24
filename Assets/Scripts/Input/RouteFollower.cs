@@ -61,8 +61,9 @@ public abstract class RouteFollower : MonoBehaviour
 
   #region EVENT HANDLERS
   protected abstract void OnRouteStart(Vector2 startPosition);
-  protected abstract void OnRouteStop(Queue<Vector2> obj);
-  protected abstract void OnRouteStay(Vector2 obj);
+  protected abstract void OnRouteStay(Vector2 currentPosition);
+  protected abstract void OnRouteStop(Queue<Vector2> route);
+  
   protected abstract void OnRouteCancel();
   #endregion
 }

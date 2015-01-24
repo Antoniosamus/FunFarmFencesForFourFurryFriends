@@ -52,81 +52,81 @@ namespace MonsterLove.StateMachine
 			}
 
 			//Reflect methods
-			var methods = entity.GetType().GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public |
-									  BindingFlags.NonPublic);
+			var methods = entity.GetType().GetMethods(BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic);
 
 			//Bind methods to states
 			var separator = "_".ToCharArray();
-			for (int i = 0; i < methods.Length; i++)
-			{
-				var names = methods[i].Name.Split(separator);
+            for (int i = 0; i < methods.Length; i++)
+            {
+                var names = methods[i].Name.Split(separator);
 
-				//Ignore functions without an underscore
-				if (names.Length <= 1)
-				{
-					continue;
-				}
+                //Ignore functions without an underscore
+                if (names.Length <= 1)
+                {
+                    continue;
+                }
 
-				Enum key;
-				try
-				{
-					key = (Enum) Enum.Parse(typeof(T), names[0]);
-				}
-				catch (ArgumentException)
-				{
-					//Some things (evetns, properties) generate automatic method. Ignore these
-					for (int j = 0; j < ignoredNames.Length; j++)
-					{
-						if (names[0] == ignoredNames[j])
-						{
-							goto SkipWarning;
-						}
-					}
+                Enum key;
+                try
+                {
+                    key = (Enum)Enum.Parse(typeof(T), names[0]);
+                }
+                catch (ArgumentException)
+                {
+                    //Some things (evetns, properties) generate automatic method. Ignore these
+                    for (int j = 0; j < ignoredNames.Length; j++)
+                    {
+                        if (names[0] == ignoredNames[j])
+                        {
+                            goto SkipWarning;
+                        }
+                    }
 
-					Debug.LogWarning("Method with name " + methods[i].Name + " could not resolve a matching state. Check method spelling");
-					continue;
+                    Debug.LogWarning("Method with name " + methods[i].Name + " could not resolve a matching state. Check method spelling");
+                    continue;
 
-				SkipWarning:
-					continue;
-				}
+                SkipWarning:
+                    continue;
+                }
 
-				var targetState = stateLookup[key];
+                var targetState = stateLookup[key];
 
-				switch (names[1])
-				{
-					case "Enter":
-						if (methods[i].ReturnType == typeof(IEnumerator))
-						{
-							targetState.Enter = CreateDelegate<Func<IEnumerator>>(methods[i], entity);
-						}
-						else
-						{
-							var action = CreateDelegate<Action>(methods[i], entity);
-							targetState.Enter = () => { action(); return null; };
-						}
-						break;
-					case "Exit":
-						if (methods[i].ReturnType == typeof(IEnumerator))
-						{
-							targetState.Exit = CreateDelegate<Func<IEnumerator>>(methods[i], entity);
-						}
-						else
-						{
-							var action = CreateDelegate<Action>(methods[i], entity);
-							targetState.Exit = () => { action(); return null; };
-						}
-						break;
-					case "Update":
-						targetState.Update = CreateDelegate<Action>(methods[i], entity);
-						break;
-					case "LateUpdate":
-						targetState.LateUpdate = CreateDelegate<Action>(methods[i], entity);
-						break;
-					case "FixedUpdate":
-						targetState.FixedUpdate = CreateDelegate<Action>(methods[i], entity);
-						break;
-				}
-			}
+                switch (names[1])
+                {
+                    case "Enter":
+                        if (methods[i].ReturnType == typeof(IEnumerator))
+                        {
+                            targetState.Enter = CreateDelegate<Func<IEnumerator>>(methods[i], entity);
+                        }
+                        else
+                        {
+                            var action = CreateDelegate<Action>(methods[i], entity);
+                            targetState.Enter = () => { action(); return null; };
+                        }
+                        break;
+                    case "Exit":
+                        if (methods[i].ReturnType == typeof(IEnumerator))
+                        {
+                            targetState.Exit = CreateDelegate<Func<IEnumerator>>(methods[i], entity);
+                        }
+                        else
+                        {
+                            var action = CreateDelegate<Action>(methods[i], entity);
+                            targetState.Exit = () => { action(); return null; };
+                        }
+                        break;
+                    case "Update":
+                        targetState.Update = CreateDelegate<Action>(methods[i], entity);
+                        break;
+                    case "LateUpdate":
+                        targetState.LateUpdate = CreateDelegate<Action>(methods[i], entity);
+                        break;
+                    case "FixedUpdate":
+                        targetState.FixedUpdate = CreateDelegate<Action>(methods[i], entity);
+                        break;
+                }
+                //break;
+            }
 		}
 
 		private V CreateDelegate<V>(MethodInfo method, Object target) where V : class

@@ -30,7 +30,7 @@ public class AnimalBehaviour : StateMachineBehaviour
     public void OnEnable()
     {
         //tracer.OnRouteStart += HandleOnRouteStart;
-        runner.OnCollisionAppears += OnRunnerCollision;
+       // runner.OnCollisionAppears += OnRunnerCollision;
     }
 
     public void OnDisable()

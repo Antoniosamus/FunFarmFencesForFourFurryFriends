@@ -11,7 +11,7 @@ public class GameManager : Singleton<GameManager>
   private GameObject fencePrefab;
 
   private const int PositionOffset = 20;
-  private int AINumber = 15;
+  public int AINumber = 15;
 	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();
@@ -19,6 +19,8 @@ public class GameManager : Singleton<GameManager>
     private XMLParser.LevelData[] aLevelData;
 
     public float Percent { get { return IAManager.Instance.AnimalPool.all.Count / AINumber; } }
+
+	public List<GameObject> fencesInternal;
 
     public List<GameObject> AliveAnimals (string prefabName)
     {
@@ -38,19 +40,26 @@ public class GameManager : Singleton<GameManager>
 
   void OnEnable () 
 	{
-    FenceWorld();
+    	FenceWorld();
 
-		IAManager.Instance.Inizialize(AINumber);
-        //Vector3 vector;
+		Reinicialize ();
 
-        //Por probar InitializePrefabs();
-        for (int i = 0; i < farmerNumber; i++)
-        {
-            Vector3 v = GetPerifericPointInPlane();
-            var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
-            Farmers.Add(f.GetComponent<FarmerController>());
-        }
 		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
+	}
+
+
+	public void Reinicialize()
+	{
+		IAManager.Instance.Inizialize(AINumber);
+		//Vector3 vector;
+		
+		//Por probar InitializePrefabs();
+		for (int i = 0; i < farmerNumber; i++)
+		{
+			Vector3 v = GetPerifericPointInPlane();
+			var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
+			Farmers.Add(f.GetComponent<FarmerController>());
+		}
 	}
 
   private void FenceWorld()
@@ -83,7 +92,7 @@ public class GameManager : Singleton<GameManager>
 		
 		UIManager.Instance.SetGameOver();
 		
-		Application.LoadLevel ("EmptyScene");
+		//Application.LoadLevel ("EmptyScene");
 		Debug.Log("FINAL DEL JUEGO!");
 	}
 
@@ -141,7 +150,30 @@ public class GameManager : Singleton<GameManager>
 
 	public void Clean ()
 	{
+
+		foreach (GameObject obj in fencesInternal) 
+		{
+			if(obj != null)
+				Destroy(obj);
+		}
+
+		fencesInternal.Clear ();
+
+		foreach (FarmerController obj in Farmers) 
+		{
+			if (obj != null)
+				Destroy(obj.gameObject);
+		}
+
 		Farmers.Clear ();
-		IAManager.Instance.AnimalPool.Clear ();
+
+
+		foreach (AnimalBehaviour obj in IAManager.Instance.AnimalPool.all) 
+		{
+			if (obj != null)
+				Destroy(obj.gameObject);
+		}
+
+
 	}
 }

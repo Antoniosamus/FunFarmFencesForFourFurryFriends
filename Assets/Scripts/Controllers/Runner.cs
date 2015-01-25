@@ -37,7 +37,7 @@ public class Runner : MonoBehaviour
     get { return _target; }
     set 
     {
-      if( (value - _target).sqrMagnitude < _targetDistanceMinSqr) 
+      if( (value - (Vector2) transform.position).sqrMagnitude < _targetDistanceMinSqr) 
       {
         TargetReach();
       }
@@ -121,8 +121,8 @@ public class Runner : MonoBehaviour
     if(direction.sqrMagnitude < _targetDistanceMinSqr)
       TargetReach();
 
-		float reorientation = Vector3.Cross(forwardDirection, direction).z;
-    rigidbody2D.velocity = Vector3.Normalize(direction) * _linearVelocityAbs;
+		float reorientation = Vector3.Cross(transform.TransformDirection(forwardDirection), direction).z;
+    rigidbody2D.velocity = direction.normalized * _linearVelocityAbs;
 		rigidbody2D.angularVelocity = _angularVelocityAbs * reorientation;
 	}
 

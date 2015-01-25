@@ -88,11 +88,17 @@ public class RouteDrawer : RouteFollower
     } 
     else if(_target == other.gameObject && _steps.Count < _stepGapMax) 
     {
-      _stepPool.UnspawnAll();
-      _steps.Clear();
-      Destroy(_target);
-      _target = null;
+      EraseAll();
     }
+  }
+
+  
+
+  //--------------------------------------------------
+
+  private void OnCollisionEnter2D()
+  {
+    EraseAll();
   }
 
   #endregion
@@ -131,15 +137,22 @@ public class RouteDrawer : RouteFollower
 
   protected override void OnRouteCancel()
   {
+    EraseAll();
+  }
+
+  #endregion
+
+
+  //====================================
+
+  private void EraseAll()
+  {
     _stepPool.UnspawnAll();
     _steps.Clear();
-
-    if(_target != null) {
+    if (_target != null) {
       Destroy(_target);
       _target = null;
     }
   }
-
-  #endregion
 
 }

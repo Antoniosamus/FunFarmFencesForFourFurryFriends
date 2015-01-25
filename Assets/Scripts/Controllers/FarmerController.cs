@@ -2,24 +2,16 @@
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Runner))]
-public class FarmerController : RouteFollower, IFarmerEvents
+public class FarmerController : RouteFollower
 {
   [SerializeField]
-	private Runner _runner;
-	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
+	public Runner _runner;
+	public Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
     public bool _canFarm = true;
 
   [SerializeField]
   private float _routeStartDelay = 1f;
-
-  //--------------------------------------------------------------
-  
-  #region IFarmerEvents
-  public event CollisionHandler OnCollideWithObstacle;
-  public event CollisionHandler OnCollideWithAnimal;
-  #endregion
-
 
 
   //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -67,7 +59,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
   #region RouteFollower
   protected override void OnRouteStay(Vector2 currentPosition)
   {
-      if (_currentRoute.Count == 0 && _canFarm)
+     if (_currentRoute.Count == 0)
       Invoke("FollowRoute", _routeStartDelay);
     _currentRoute.Enqueue(currentPosition);
   }
@@ -103,24 +95,8 @@ public class FarmerController : RouteFollower, IFarmerEvents
   
   private void OnRouteRouteInterrupt (GameObject other)
 	{
-	  switch(LayerMask.LayerToName(other.layer))
-	  {
-	    case "Obstacle":
-	      if (OnCollideWithObstacle != null)
-	        OnCollideWithObstacle(other);
-	      _currentRoute.Clear ();
-          _canFarm = false;
-          _runner.Stop();
-	      break;
-
-      case "Animal":
-        if(OnCollideWithAnimal != null)
-          OnCollideWithAnimal(other);
-        _currentRoute.Clear();
-        _canFarm = false;
-        _runner.Stop();
-        break;
-	  }
+	  _currentRoute.Clear();
+    _runner.Stop();
 	}
 
   #endregion

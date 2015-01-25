@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager> {
 	
-	private int AINumber = 10;
+  private const int PositionOffset = 10;
+  private int AINumber = 15;
 	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();
@@ -24,8 +25,9 @@ public class GameManager : Singleton<GameManager> {
 
 	[SerializeField] GameObject farmerPrefab;
     private List<FarmerController> Farmers = new List<FarmerController>();
+  
 
-	void OnEnable () 
+  void OnEnable () 
 	{
 		IAManager.Instance.Inizialize (AINumber);
         //Vector3 vector;
@@ -55,30 +57,29 @@ public class GameManager : Singleton<GameManager> {
         Debug.Log("FINAL DEL JUEGO!");
     }
 
-	public Vector3 GetPerifericPointInPlane()
+	public Vector2 GetPerifericPointInPlane()
 	{
 		Vector3 vecAux = Vector3.zero;
 		Vector3 worldPoint = Vector3.zero;
     
 		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-
-		int ChoosenMax  = Random.Range(0, 1);
-		int ChoosenSide = Random.Range(0, 1);
 		
-		if (ChoosenSide == 1) 
-		{
-			vecAux.x =  (ChoosenMax == 0) ? 0 : screenSize.x ;
+    int choosenSide = Random.Range(0, 2);
+		if (choosenSide == 1) {
+			vecAux.x = Random.Range(0, 2) * screenSize.x;
 			vecAux.y = Random.Range (0, screenSize.y);
-		}
-		else
-		{
+		
+    } else {
 			vecAux.x = Random.Range (0, screenSize.x);
-			vecAux.y =  (ChoosenMax == 0) ? 0 : screenSize.y ;
+			vecAux.y = Random.Range(0, 2) * screenSize.y ;
 		}
 
-    vecAux.z = -Camera.main.transform.position.z;
+    vecAux.x = Mathf.Clamp(vecAux.x, PositionOffset, Screen.width - PositionOffset);
+    vecAux.y = Mathf.Clamp(vecAux.y, PositionOffset, Screen.height - PositionOffset);
+    vecAux.z   = -Camera.main.transform.position.z;
 		worldPoint = Camera.main.ScreenToWorldPoint(vecAux);
-		return new Vector3(worldPoint.x, worldPoint.y, 0);
+    
+    return (Vector2) worldPoint;
 	}
 	
 	public Vector2 GetRandomPointInPlane()
@@ -86,11 +87,11 @@ public class GameManager : Singleton<GameManager> {
 		Vector2 result;
 		Vector3 vecAux = Vector3.zero;
 		
-		Vector3 screenSize = new Vector3(Screen.currentResolution.width, Screen.currentResolution.height, 10);
+		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
 
-		vecAux.y = Random.Range (0, screenSize.y);
-		vecAux.x = Random.Range (0, screenSize.x);
-
+		vecAux.y = Random.Range(0f, screenSize.y);
+		vecAux.x = Random.Range(0f, screenSize.x);
+    vecAux.z = -Camera.main.transform.position.z;
 		result = (Vector2)(Camera.main.ScreenToWorldPoint(vecAux));
 		
 		return result;

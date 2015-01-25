@@ -47,12 +47,13 @@ public class AnimalBehaviour : StateMachineBehaviour
 	private void OnRunnerRouteInterrupt(GameObject other)
 	{
         string collisionName = LayerMask.LayerToName(other.layer);
-        Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
+        //Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
         //Esto es un ñordo pero bueno
         switch (collisionName)
         {
             case "Farmer":
-                IAManager.Instance.Kill(this);
+                Destroy(other);
+                ChangeState(States.Hunt);
                 break;
             case "Obstacle":
                 switch ((States)GetState())
@@ -139,7 +140,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Hunt_Exit()
 	{
-		Debug.Log("Hunt_Exit");
+		//Debug.Log("Hunt_Exit");
 	}
 	
 	void HuntOnRunnerCollision(GameObject collision)

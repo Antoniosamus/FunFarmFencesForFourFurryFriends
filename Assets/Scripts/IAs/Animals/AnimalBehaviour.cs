@@ -75,7 +75,8 @@ public class AnimalBehaviour : StateMachineBehaviour
                     if (av.FoodChainLevel < FoodChainLevel) IAManager.Instance.Kill(this);
                     else if (av.FoodChainLevel == FoodChainLevel)
                     {
-                        runner.Target = av.gameObject.transform.position;
+                        //runner.Target = av.gameObject.transform.position;
+                        runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(1, 5));
                         ChangeState(States.Escape);
                     }
                     else 

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager> {
 	
-	private int AINumber = 10;
-	private int farmerNumber = 1;
+	private int AINumber = 30;
+	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();
     private List<XMLParser.LevelData> lLevelData;
@@ -26,8 +26,6 @@ public class GameManager : Singleton<GameManager> {
         for (int i = 0; i < farmerNumber; i++)
         {
             Vector3 v = GetPerifericPointInPlane();
-            v.x += Random.Range(-15, 15);
-            v.y += Random.Range(-15, 15);
             var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
             Farmers.Add(f.GetComponent<FarmerController>());
         }

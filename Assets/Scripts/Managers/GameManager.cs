@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
   [SerializeField]	
   private GameObject fencePrefab;
 
-  private const int PositionOffset = 30;
+  private const int PositionOffset = 5;
   private int AINumber = 15;
 	private int farmerNumber = 4;
 
@@ -89,32 +89,22 @@ public class GameManager : Singleton<GameManager>
 
 	public Vector2 GetPerifericPointInPlane()
 	{
-		Vector3 vecAux = Vector3.zero;
-		Vector3 worldPoint = Vector3.zero;
-    
-		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-		
-    int choosenSide = Random.Range(0, 2);
-		if (choosenSide == 1) {
-			vecAux.x = Random.Range(0, 2) * screenSize.x;
-			vecAux.y = Random.Range (0, screenSize.y);
-		
-    } else {
-			vecAux.x = Random.Range (0, screenSize.x);
-			vecAux.y = Random.Range(0, 2) * screenSize.y ;
-		}
-
-    vecAux.x = Mathf.Clamp(vecAux.x, PositionOffset, Screen.width - PositionOffset);
-    vecAux.y = Mathf.Clamp(vecAux.y, PositionOffset, Screen.height - PositionOffset);
-    vecAux.z   = -Camera.main.transform.position.z;
-		worldPoint = Camera.main.ScreenToWorldPoint(vecAux);
-    
-    return (Vector2) worldPoint;
+	  switch (Random.Range(0,4))
+	  {
+      case 0:
+      return new Vector2(Random.Range(_bottomLeft.x, _bottomRight.x), _bottomLeft.y + PositionOffset);
+      case 1:
+      return new Vector2(Random.Range(_upLeft.x, _upRight.x)        , _upLeft.y - PositionOffset);
+      case 2:
+      return new Vector2(_bottomLeft.x  + PositionOffset,  Random.Range(_bottomLeft.y, _upLeft.y) );
+      default:
+      return new Vector2(_bottomRight.x - PositionOffset, Random.Range(_bottomRight.y, _upRight.y) );
+    }
 	}
 	
 	public Vector2 GetRandomPointInPlane()
 	{
-		return new Vector2(Random.Range(0f, _upRight.x), Random.Range(0f, _upRight.y));;
+		return new Vector2(Random.Range(_bottomLeft.x, _upRight.x), Random.Range(_bottomLeft.y, _upRight.y));;
 	}
 
     public void InitializePrefabs()

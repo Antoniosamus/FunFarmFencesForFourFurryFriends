@@ -24,7 +24,9 @@ public class RouteDrawer : RouteFollower
   private Vector2 _lastPosition;
   private Vector2 _currentPosition;
 
-  private Queue<GameObject> _steps = new Queue<GameObject>();
+  [SerializeField]
+  private int _stepGapMax = 5;
+  private List<GameObject> _steps = new List<GameObject>();
   
 
 
@@ -66,6 +68,29 @@ public class RouteDrawer : RouteFollower
     
     base.OnDestoy();
   }
+
+  //------------------------------------------------
+
+  private void OnTriggerEnter2D(Collider2D other)
+  {
+    int stepIndex = _steps.IndexOf(other.gameObject);
+    if(stepIndex > -1) 
+    {
+      if(stepIndex > _stepGapMax) 
+        return;
+
+      List<GameObject> reachedSteps = _steps.GetRange(0, _steps.IndexOf(other.gameObject) + 1);
+      foreach(GameObject go in reachedSteps)
+        _stepPool.Unspawn(go);
+      _steps.RemoveRange(0, stepIndex);
+    } 
+    else if(_target == other.gameObject) 
+    {
+      Destroy(_target);
+      _target = null;
+    }
+  }
+
   #endregion
 
 
@@ -85,8 +110,7 @@ public class RouteDrawer : RouteFollower
     GameObject step = _stepPool.Spawn(_currentPosition, 
       Quaternion.FromToRotation(_stepPrefab.transform.right, nextPosition - _lastPosition));
 
-    step.GetComponent<RoutePoint>().ParentDrawer = this;
-    _steps.Enqueue(step);
+    _steps.Add(step);
 
     _lastPosition = _currentPosition;
     _currentPosition = nextPosition;
@@ -97,7 +121,6 @@ public class RouteDrawer : RouteFollower
   {
     var targetPosition = new Vector3(_lastPosition.x, _lastPosition.y, _targetPrefab.transform.position.z);
     _target = Instantiate(_targetPrefab, targetPosition, Quaternion.identity) as GameObject;
-    _target.GetComponent<RoutePoint>().ParentDrawer = this;
   }
 
   //------------------------------------------------
@@ -115,17 +138,4 @@ public class RouteDrawer : RouteFollower
 
   #endregion
 
-
-  //==============================================================
-  
-  public void EraseRoutePoint(RoutePoint routePoint)
-  {
-    if(routePoint != _target) {
-      _stepPool.Unspawn(routePoint.gameObject);
-    
-    } else {
-      Destroy(_target.gameObject);
-      _target = null;
-    }
-  }
 }

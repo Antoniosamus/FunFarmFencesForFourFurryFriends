@@ -30,7 +30,6 @@ public class UIManager : Singleton<UIManager> {
 
 	public void OnEnable()
 	{
-
 	}
 
 	public void OnDisable()
@@ -40,12 +39,13 @@ public class UIManager : Singleton<UIManager> {
 
 	public void StartGame()
 	{
-		Application.LoadLevel ("Main");
-		this.gameObject.SetActive(false);
+		Application.LoadLevelAdditive ("Main");
+		this.gameOverPanel.SetActive(false);
 	}
 
 	public void SetGameOver()
 	{
+		//this.gameObject.SetActive (true);
 		this.gameOverPanel.SetActive (true);
 		SetStars (GameManager.Instance.Percent);
 	}

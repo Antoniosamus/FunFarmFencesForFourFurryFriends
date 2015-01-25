@@ -39,6 +39,7 @@ public class GameManager : Singleton<GameManager> {
             var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
             Farmers.Add(f.GetComponent<FarmerController>());
         }
+		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
 	}
 
     void Update() 
@@ -49,13 +50,18 @@ public class GameManager : Singleton<GameManager> {
     IEnumerator TimeOutEndGame() 
     {
         yield return new WaitForSeconds(endTime);
-        IAManager.Instance.Stop();
-
-		UIManager.Instance.SetGameOver ();
-
-		Application.LoadLevel ("EmptyScene");
-        Debug.Log("FINAL DEL JUEGO!");
+		GameOver ();
     }
+
+	public void GameOver()
+	{
+		IAManager.Instance.Stop();
+		
+		UIManager.Instance.SetGameOver ();
+		
+		Application.LoadLevel ("EmptyScene");
+		Debug.Log("FINAL DEL JUEGO!");
+	}
 
 	public Vector2 GetPerifericPointInPlane()
 	{
@@ -110,5 +116,12 @@ public class GameManager : Singleton<GameManager> {
 
         //farmerNumber = aLevelData[0].FarmerAmount;
     }
+
+
+	public void CheckIfEnd()
+	{
+		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null))))
+			GameOver ();
+	}
 
 }

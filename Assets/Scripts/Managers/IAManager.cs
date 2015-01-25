@@ -43,8 +43,10 @@ public class IAManager : Singleton<IAManager>
     /// <returns>AnimalBehaviour or Null</returns>
     public void GetNearestToMe(AnimalBehaviour me)
     {
-        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => x.FoodChainLevel);
+        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => Vector3.Distance( x.transform.position, me.transform.position));
         me.AnimalToHunt = null;
+
+        Debug.Log(me.name + " -> " + string.Join(", ", candidates.ToList().ConvertAll(x=>x.name).ToArray()));
 
         if (candidates.Count() > 0) me.AnimalToHunt = candidates.First();
 

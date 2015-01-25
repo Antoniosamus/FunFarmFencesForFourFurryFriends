@@ -112,9 +112,8 @@ public class AnimalBehaviour : StateMachineBehaviour
 		//1. Look for the nearest animal to hunt
         IAManager.Instance.GetNearestToMe(this);
 
-        if (AnimalToHunt != null) 
-          runner.Target = AnimalToHunt.transform.position;
-		
+        if (AnimalToHunt != null) runner.Target = AnimalToHunt.transform.position;
+        else ChangeState(States.Pasture);
         //if (Target == Vector3.zero) ChangeState(States.Pasture);
 	}
 	
@@ -124,9 +123,12 @@ public class AnimalBehaviour : StateMachineBehaviour
 
         //1. Look at the target and walk 
         if (AnimalToHunt != null)
+        {
             runner.Target = AnimalToHunt.transform.position;
-        else
-          ChangeState(States.Pasture);
+        }
+
+        /*if (Target == Vector3.zero)*/
+        ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Exit()
@@ -156,6 +158,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	void Pasture_Update()
 	{
 		//Debug.Log("Pasture_Update");
+        ChangeState(States.Hunt);
 	}
 	
 	void Pasture_Exit()
@@ -184,6 +187,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	void Escape_Update()
 	{
 		//Debug.Log("Escape_Update");
+        ChangeState(States.Hunt);
 	}
 	
 	

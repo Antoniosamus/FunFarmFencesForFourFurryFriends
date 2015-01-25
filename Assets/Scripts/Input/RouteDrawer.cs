@@ -57,6 +57,8 @@ public class RouteDrawer : RouteFollower
 
   protected override void OnDestoy()
   {
+    EraseAll();
+
     _steps = null;
     _stepPool = null;
     _stepPrefab = null;

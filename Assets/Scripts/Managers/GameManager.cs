@@ -112,7 +112,7 @@ public class GameManager : Singleton<GameManager>
 	
 	public Vector2 GetRandomPointInPlane()
 	{
-		return new Vector2(Random.Range(0f, _upRight.x), Random.Range(0f, _upRight.y));;
+		return new Vector2(Random.Range(_bottomLeft.x, _upRight.x), Random.Range(_bottomLeft.y, _upRight.y));;
 	}
 
     public void InitializePrefabs()

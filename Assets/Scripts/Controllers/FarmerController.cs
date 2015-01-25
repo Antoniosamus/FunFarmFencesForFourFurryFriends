@@ -8,6 +8,8 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	private Runner _runner;
 	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
+    private bool _canFarm = true;
+
   [SerializeField]
   private float _routeStartDelay = 1f;
 
@@ -65,7 +67,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
   #region RouteFollower
   protected override void OnRouteStay(Vector2 currentPosition)
   {
-    if(_currentRoute.Count == 0)
+      if (_currentRoute.Count == 0 && _canFarm)
       Invoke("FollowRoute", _routeStartDelay);
     _currentRoute.Enqueue(currentPosition);
   }
@@ -107,11 +109,14 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	      if (OnCollideWithObstacle != null)
 	        OnCollideWithObstacle(other);
 	      _currentRoute.Clear ();
+          _canFarm = false;
 	      break;
 
       case "Animal":
         if(OnCollideWithAnimal != null)
           OnCollideWithAnimal(other);
+        _currentRoute.Clear();
+        _canFarm = false;
         break;
 	  }
 	}

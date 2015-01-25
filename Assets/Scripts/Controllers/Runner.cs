@@ -112,7 +112,8 @@ public class Runner : MonoBehaviour
 
   private void OnTriggerEnter2D(Collider2D other) 
   {
-    if(other == _nextRoutePoint)
+    if(_nextRoutePoint != null 
+      && other.gameObject == _nextRoutePoint.gameObject)
       TargetReach();
   }
   
@@ -120,7 +121,7 @@ public class Runner : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D other)
   {
-    Collision(other.gameObject);
+    RouterInterrupt(other.gameObject);
   }
 
   #endregion
@@ -140,7 +141,7 @@ public class Runner : MonoBehaviour
   }
 
   //----------------------------------------------
-  protected virtual void Collision(GameObject other)
+  protected virtual void RouterInterrupt(GameObject other)
   {
     Action<GameObject> e = OnRouteInterrupt;
     if(e != null)

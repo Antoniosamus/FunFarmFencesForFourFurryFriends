@@ -79,10 +79,10 @@ public class RouteDrawer : RouteFollower
       if(stepIndex > _stepGapMax) 
         return;
 
-      List<GameObject> reachedSteps = _steps.GetRange(0, _steps.IndexOf(other.gameObject) + 1);
+      List<GameObject> reachedSteps = _steps.GetRange(0, stepIndex + 1);
       foreach(GameObject go in reachedSteps)
         _stepPool.Unspawn(go);
-      _steps.RemoveRange(0, stepIndex);
+      _steps.RemoveRange(0, stepIndex + 1);
     } 
     else if(_target == other.gameObject) 
     {

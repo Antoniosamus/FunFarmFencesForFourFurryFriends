@@ -7,6 +7,20 @@ using MonsterLove.StateMachine;
 [RequireComponent(typeof(Runner))]
 public class AnimalBehaviour : StateMachineBehaviour
 {
+    public int samePlace = 0;
+
+    public Vector3 last = Vector3.one;
+
+    public void Update() 
+    {
+        if ((this.gameObject.transform.position - last).magnitude < 0.01f)
+            samePlace++;
+        else
+            samePlace = 0;
+
+        last = this.gameObject.transform.position;
+    }
+
 	public int FoodChainLevel;
 	
 	//private Vector3 Target = Vector3.zero;

@@ -88,16 +88,16 @@ public class GameManager : Singleton<GameManager> {
 
     public void InitializePrefabs()
     {
-        aLevelData = lLevelData.ToArray();
-        //int i = 0;
-        foreach (XMLParser.AnimalData tempAnimalD in aLevelData[0].Animals)
-        {
-            IAManager.Instance.prefabs[0].name = tempAnimalD.name;
-            IAManager.Instance.Inizialize(tempAnimalD.AnimalAmount);
-            //i++;
-        }
+        //aLevelData = lLevelData.ToArray();
+        ////int i = 0;
+        //foreach (XMLParser.AnimalData tempAnimalD in aLevelData[0].Animals)
+        //{
+        //    IAManager.Instance.prefabs[0].name = tempAnimalD.name;
+        //    IAManager.Instance.Inizialize(tempAnimalD.AnimalAmount);
+        //    //i++;
+        //}
 
-        farmerNumber = aLevelData[0].FarmerAmount;
+        //farmerNumber = aLevelData[0].FarmerAmount;
     }
 
 }

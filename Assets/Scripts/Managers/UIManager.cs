@@ -49,8 +49,6 @@ public class UIManager : Singleton<UIManager> {
 
 	public void SetGameOver()
 	{
-		//this.gameObject.SetActive (true);
-
 		GameManager.Instance.Clean ();
 		gameOverPanel.SetActive (true);
 		SetStars(GameManager.Instance.Percent);
@@ -86,11 +84,16 @@ public class UIManager : Singleton<UIManager> {
 
 		if (pausePanel.gameObject.activeSelf)
 			pausePanel.SetActive(false);
-
-		if (gameOverPanel.gameObject.activeSelf)
-			gameOverPanel.SetActive(false);
 	}
 
+	public void Reinit()
+	{
+		Time.timeScale = 1;
+
+		gameOverPanel.SetActive(false);
+
+		GameManager.Instance.Reinicialize ();
+	}
 
 	public void AudioClicked()
 	{

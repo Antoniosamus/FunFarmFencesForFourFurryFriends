@@ -147,7 +147,7 @@ public class AnimalBehaviourPool
         for (var i = 0; i < all.Count; i++)
         {
             AnimalBehaviour obj = all[i];
-            if (obj.gameObject.activeInHierarchy)
+            if (obj != null)
                 Unspawn(obj);
         }
     }

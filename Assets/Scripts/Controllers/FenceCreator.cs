@@ -24,6 +24,7 @@ public class FenceCreator : MonoBehaviour
         if (farmerController._runner.IsFollowingTarget == true)
         {
             var c = Instantiate(Fence, transform.position, transform.rotation) as GameObject;
+			GameManager.Instance.fencesInternal.Add(c);
             StartCoroutine(addBox2d(c));
         }
     }

@@ -135,6 +135,9 @@ public class GameManager : Singleton<GameManager>
 		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null)))
       || Farmers.Count == 0 || Farmers.All(f => f == null))
 			GameOver ();
+
+        if (IAManager.Instance.AnimalPool.all.All(x => x.samePlace > 300))
+            GameOver();
 	}
 
 	public void Clean ()

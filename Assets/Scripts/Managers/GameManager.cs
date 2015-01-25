@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
   [SerializeField]	
   private GameObject fencePrefab;
 
-  private const int PositionOffset = 20;
+  private const int PositionOffset = 30;
   private int AINumber = 15;
 	private int farmerNumber = 4;
 

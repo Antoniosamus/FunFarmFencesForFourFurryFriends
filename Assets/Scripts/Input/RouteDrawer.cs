@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
-
 
 
 [RequireComponent(typeof(FarmerController) )]
@@ -73,19 +73,23 @@ public class RouteDrawer : RouteFollower
 
   private void OnTriggerEnter2D(Collider2D other)
   {
-    int stepIndex = _steps.IndexOf(other.gameObject);
+    int stepIndex = -1;
+    if(_steps.Count > 0) {
+      int stepIndexMax = Math.Min(_steps.Count - 1, _stepGapMax);
+      stepIndex = _steps.FindIndex(0, stepIndexMax, go => go == other.gameObject);
+    }
+
     if(stepIndex > -1) 
     {
-      if(stepIndex > _stepGapMax) 
-        return;
-
       List<GameObject> reachedSteps = _steps.GetRange(0, stepIndex + 1);
       foreach(GameObject go in reachedSteps)
         _stepPool.Unspawn(go);
       _steps.RemoveRange(0, stepIndex + 1);
     } 
-    else if(_target == other.gameObject) 
+    else if(_target == other.gameObject && _steps.Count < _stepGapMax) 
     {
+      _stepPool.UnspawnAll();
+      _steps.Clear();
       Destroy(_target);
       _target = null;
     }

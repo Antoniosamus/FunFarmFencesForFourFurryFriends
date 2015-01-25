@@ -43,7 +43,7 @@ public class Runner : MonoBehaviour
       }
       else 
       {
-        _isFollowingTarget = true;
+        IsFollowingTarget = true;
         _target = value;
 
         if(_nextRoutePoint == null) {
@@ -55,7 +55,25 @@ public class Runner : MonoBehaviour
       }
     }
   }
+
+  //-------------------------------------------
+
   private bool _isFollowingTarget;
+  private bool IsFollowingTarget 
+  { 
+    get { return _isFollowingTarget; }
+    set 
+    {
+      _isFollowingTarget = value;
+      if(!_isFollowingTarget) 
+      {
+        rigidbody2D.velocity = Vector2.zero;
+        rigidbody2D.angularVelocity = 0f;
+        if(_nextRoutePoint != null)
+          _nextRoutePoint.transform.position = transform.position;
+      }
+    }
+  }
  
 
 
@@ -96,7 +114,7 @@ public class Runner : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-    if(!_isFollowingTarget)
+    if(!IsFollowingTarget)
       return;
 
 		Vector2 direction = Target - (Vector2) transform.position;
@@ -121,8 +139,11 @@ public class Runner : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D other)
   {
+    IsFollowingTarget = false;
     RouterInterrupt(other.gameObject);
   }
+
+  
 
   #endregion
 
@@ -131,9 +152,7 @@ public class Runner : MonoBehaviour
   #region EVENTS
   protected virtual void TargetReach()
   {
-    _isFollowingTarget = false;
-    rigidbody2D.velocity = Vector2.zero;
-    rigidbody2D.angularVelocity = 0f;
+    IsFollowingTarget = false;
 
     Action e = OnTargetReach;
     if(e != null)
@@ -148,6 +167,14 @@ public class Runner : MonoBehaviour
       e(other);
   }
   #endregion
+
+
+  //====================================================
+
+  public void Stop()
+  {
+    IsFollowingTarget = false;
+  }
 
 
 }

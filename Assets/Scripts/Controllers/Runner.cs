@@ -18,7 +18,8 @@ public class Runner : MonoBehaviour
 
   //------------------------------
 
-  private const float RoutePointRadius = 0.01f;
+  [SerializeField]
+  private float _routePointRadius = 0.1f;
   private float _targetDistanceMinSqr;
 
 	[SerializeField] 
@@ -47,7 +48,7 @@ public class Runner : MonoBehaviour
 
         if(_nextRoutePoint == null) {
           _nextRoutePoint = new GameObject(name + "RoutePoint").AddComponent<CircleCollider2D>();
-          _nextRoutePoint.radius = RoutePointRadius;
+          _nextRoutePoint.radius = _routePointRadius;
           _nextRoutePoint.isTrigger = true;
         }
         _nextRoutePoint.transform.position = _target;
@@ -71,7 +72,7 @@ public class Runner : MonoBehaviour
     rigidbody2D.isKinematic = false;
     rigidbody2D.gravityScale = 0f;
     _runnerCollider = (collider2D as CircleCollider2D);
-    _targetDistanceMinSqr = (float) Math.Pow(_runnerCollider.radius + RoutePointRadius, 2);
+    _targetDistanceMinSqr = (float) Math.Pow(_runnerCollider.radius + _routePointRadius, 2);
   }
 
   //--------------------------------
@@ -99,8 +100,10 @@ public class Runner : MonoBehaviour
       return;
 
 		Vector2 direction = Target - (Vector2) transform.position;
-		float reorientation = Vector3.Cross(forwardDirection, direction).z;
+    if(direction.sqrMagnitude < _targetDistanceMinSqr)
+      TargetReach();
 
+		float reorientation = Vector3.Cross(forwardDirection, direction).z;
     rigidbody2D.velocity = Vector3.Normalize(direction) * _linearVelocityAbs;
 		rigidbody2D.angularVelocity = _angularVelocityAbs * reorientation;
 	}
@@ -109,7 +112,8 @@ public class Runner : MonoBehaviour
 
   private void OnTriggerEnter2D(Collider2D other) 
   {
-    if(other == _nextRoutePoint)
+    if(_nextRoutePoint != null 
+      && other.gameObject == _nextRoutePoint.gameObject)
       TargetReach();
   }
   
@@ -117,7 +121,7 @@ public class Runner : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D other)
   {
-    Collision(other.gameObject);
+    RouterInterrupt(other.gameObject);
   }
 
   #endregion
@@ -137,7 +141,7 @@ public class Runner : MonoBehaviour
   }
 
   //----------------------------------------------
-  protected virtual void Collision(GameObject other)
+  protected virtual void RouterInterrupt(GameObject other)
   {
     Action<GameObject> e = OnRouteInterrupt;
     if(e != null)

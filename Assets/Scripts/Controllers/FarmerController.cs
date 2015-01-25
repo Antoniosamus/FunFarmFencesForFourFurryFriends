@@ -63,25 +63,26 @@ public class FarmerController : RouteFollower, IFarmerEvents
   //================================================================
   
   #region RouteFollower
-  protected override void OnRouteStart(Vector2 startPosition)
-  {
-    Invoke("FollowRoute", _routeStartDelay);
-  }
-
-  //----------------------------------------------------------
   protected override void OnRouteStay(Vector2 currentPosition)
   {
+    if(_currentRoute.Count == 0)
+      Invoke("FollowRoute", _routeStartDelay);
     _currentRoute.Enqueue(currentPosition);
-  }
-  //----------------------------------------------------------
-  protected override void OnRouteStop(Queue<Vector2> route)
-  {
-     // 
   }
   //----------------------------------------------------------
   protected override void OnRouteCancel()
   {
     _currentRoute.Clear();
+  }
+  //---------------------------------------------------
+  protected override void OnRouteStart(Vector2 startPosition)
+  {
+  }
+
+  //---------------------------------------------------
+
+  protected override void OnRouteStop(Queue<Vector2> route)
+  {
   }
   
   #endregion
@@ -123,9 +124,6 @@ public class FarmerController : RouteFollower, IFarmerEvents
   // TODO Corrutina...? Mejorar bucles....
   public void FollowRoute()
 	{
-    //while(_currentRoute.Count > 0 && _currentRoute.Peek() == _runner.Target)
-    //  _currentRoute.Dequeue();
-
     if(_currentRoute.Count > 0)
 		  _runner.Target = _currentRoute.Dequeue();
 
@@ -134,13 +132,15 @@ public class FarmerController : RouteFollower, IFarmerEvents
 
   //-------------------------------------------------
 
-	
 
 
-  
 
 
-  
+
+
+
+
+
 
   
 }

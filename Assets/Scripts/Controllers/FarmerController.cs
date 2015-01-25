@@ -8,7 +8,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	private Runner _runner;
 	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
-    private bool _canFarm = false;
+    private bool _canFarm = true;
 
   [SerializeField]
   private float _routeStartDelay = 1f;

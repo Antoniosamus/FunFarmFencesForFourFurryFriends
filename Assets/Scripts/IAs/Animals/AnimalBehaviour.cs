@@ -1,4 +1,6 @@
-﻿﻿using UnityEngine;
+﻿﻿using System.Collections.Generic;
+﻿using System.Linq;
+﻿using UnityEngine;
 using System.Collections;
 using MonsterLove.StateMachine;
 
@@ -11,8 +13,9 @@ public class AnimalBehaviour : StateMachineBehaviour
 	public AnimalBehaviour AnimalToHunt = null;
 	
 	private Runner runner;
-	
-	public enum States { Hunt, Pasture, Escape, Stop }
+  private List<AnimalBehaviour> _animalsNotToHunt = new List<AnimalBehaviour>();
+
+  public enum States { Hunt, Pasture, Escape, Stop }
 	
 	#region Inicialization
 
@@ -135,7 +138,8 @@ public class AnimalBehaviour : StateMachineBehaviour
         else
             AnimalToHunt = IAManager.Instance.GetNearestToMe(this);
 
-        if (AnimalToHunt == null) ChangeState(States.Pasture);
+        if (AnimalToHunt == null) 
+          ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Exit()
@@ -145,7 +149,17 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void HuntOnRunnerCollision(GameObject collision)
 	{
-		ChangeState(States.Hunt);
+    if(collision.layer == LayerMask.NameToLayer("Obstacle"))
+    {
+      _animalsNotToHunt.Add(AnimalToHunt);
+      AnimalToHunt = IAManager.Instance.GetAllHuntable(this).Except(_animalsNotToHunt).FirstOrDefault();
+      if(AnimalToHunt == null)
+        ChangeState(States.Pasture);
+    } 
+    else 
+    {
+		  ChangeState(States.Hunt);
+    }
 	}
 	
 	#endregion

@@ -27,6 +27,7 @@ public class UIManager : Singleton<UIManager> {
 	
 	[SerializeField] GameObject gameOverPanel;
 	[SerializeField] GameObject pausePanel;
+  [SerializeField] GameObject startPanel;
 
 	public void OnEnable()
 	{
@@ -40,14 +41,14 @@ public class UIManager : Singleton<UIManager> {
 	public void StartGame()
 	{
 		Application.LoadLevelAdditive ("Main");
-		this.gameOverPanel.SetActive(false);
+		startPanel.SetActive(false);
 	}
 
 	public void SetGameOver()
 	{
 		//this.gameObject.SetActive (true);
-		this.gameOverPanel.SetActive (true);
-		SetStars (GameManager.Instance.Percent);
+		gameOverPanel.SetActive (true);
+		SetStars(GameManager.Instance.Percent);
 	}
 
 	public void SetBadges()
@@ -71,11 +72,13 @@ public class UIManager : Singleton<UIManager> {
 	public void pauseClicked()
 	{
 		Time.timeScale = 0;
+    pausePanel.SetActive(true);
 	}
 
 	public void ContinueClicked()
 	{
 		Time.timeScale = 1;
+    pausePanel.SetActive(false);
 	}
 
 

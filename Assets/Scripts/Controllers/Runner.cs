@@ -139,8 +139,15 @@ public class Runner : MonoBehaviour
 
   private void OnCollisionEnter2D(Collision2D other)
   {
-    IsFollowingTarget = false;
-    RouterInterrupt(other.gameObject);
+    RouteInterrupt(other.gameObject);
+  }
+
+  //-----------------------------------------
+
+  private void OnCollisionStay2D(Collision2D other)
+  {
+    if(IsFollowingTarget)
+      RouteInterrupt(other.gameObject);
   }
 
   
@@ -160,7 +167,7 @@ public class Runner : MonoBehaviour
   }
 
   //----------------------------------------------
-  protected virtual void RouterInterrupt(GameObject other)
+  protected virtual void RouteInterrupt(GameObject other)
   {
     Action<GameObject> e = OnRouteInterrupt;
     if(e != null)

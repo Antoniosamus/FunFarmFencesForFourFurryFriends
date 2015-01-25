@@ -57,7 +57,7 @@ public class GameManager : Singleton<GameManager> {
 	{
 		IAManager.Instance.Stop();
 		
-		UIManager.Instance.SetGameOver ();
+		UIManager.Instance.SetGameOver();
 		
 		Application.LoadLevel ("EmptyScene");
 		Debug.Log("FINAL DEL JUEGO!");
@@ -122,6 +122,7 @@ public class GameManager : Singleton<GameManager> {
 	{
 		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null))))
 			GameOver ();
+
 	}
 
 }

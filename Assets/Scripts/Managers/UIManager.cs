@@ -67,15 +67,18 @@ public class UIManager : Singleton<UIManager> {
 
 	public void SetStars(float percentage)
 	{
-		float divided = percentage / 3;
+		
+		float divided = percentage * 100;
 
-		starsOff [0].SetActive (percentage < 33);
-		starsOff [1].SetActive (percentage < 66);
-		starsOff [2].SetActive (percentage < 100);
+		Debug.Log (divided);
 
-		starsOn [0].SetActive (percentage > 33);
-		starsOn [1].SetActive (percentage > 66);
-		starsOn [2].SetActive (percentage == 100);
+		starsOff [0].SetActive (divided < 33);
+		starsOff [1].SetActive (divided < 66);
+		starsOff [2].SetActive (divided < 100);
+
+		starsOn [0].SetActive (divided > 33);
+		starsOn [1].SetActive (divided > 66);
+		starsOn [2].SetActive (divided == 100);
 	}
 
 	public void pauseClicked()

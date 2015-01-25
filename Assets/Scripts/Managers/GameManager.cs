@@ -18,7 +18,8 @@ public class GameManager : Singleton<GameManager>
     private List<XMLParser.LevelData> lLevelData;
     private XMLParser.LevelData[] aLevelData;
 
-    public float Percent { get { return IAManager.Instance.AnimalPool.all.Count / AINumber; } }
+    public float Percent { get { 
+			return IAManager.Instance.AnimalPool.all.Count() / (float)AINumber; } }
 
 	public List<GameObject> fencesInternal;
 

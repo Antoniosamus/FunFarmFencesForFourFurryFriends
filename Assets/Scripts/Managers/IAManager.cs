@@ -45,15 +45,18 @@ public class IAManager : Singleton<IAManager>
     {
         var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => x.FoodChainLevel);
         me.AnimalToHunt = null;
-        foreach (var anim in candidates)
-        {
-            RaycastHit hit;
-            if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
-            {
-                // Draw line between m and the hit point
-                me.AnimalToHunt = anim;
-                break;
-            }
-        }
+
+        if (candidates.Count() > 0) me.AnimalToHunt = candidates.First();
+
+        //foreach (var anim in candidates)
+        //{
+        //    RaycastHit hit;
+        //    if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
+        //    {
+        //        // Draw line between m and the hit point
+        //        me.AnimalToHunt = anim;
+        //        break;
+        //    }
+        //}
     }
 }

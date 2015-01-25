@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
-public class GameManager : Singleton<GameManager> {
-	
-  private const int PositionOffset = 10;
+public class GameManager : Singleton<GameManager> 
+{
+  [SerializeField]	
+  private GameObject fencePrefab;
+
+  private const int PositionOffset = 20;
   private int AINumber = 15;
 	private int farmerNumber = 4;
 
@@ -25,10 +30,16 @@ public class GameManager : Singleton<GameManager> {
 
 	[SerializeField] GameObject farmerPrefab;
   public List<FarmerController> Farmers = new List<FarmerController>();
-  
+  private Vector2 _bottomLeft;
+  private Vector2 _bottomRight;
+  private Vector2 _upLeft;
+  private Vector2 _upRight;
+
 
   void OnEnable () 
 	{
+    FenceWorld();
+
 		IAManager.Instance.Inizialize (AINumber);
         //Vector3 vector;
 
@@ -41,8 +52,31 @@ public class GameManager : Singleton<GameManager> {
         }
 		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
 	}
-   
-	public void GameOver()
+
+  private void FenceWorld()
+  {
+    _bottomLeft = Camera.main.ScreenToWorldPoint(new Vector3(0f, 0f, -Camera.main.transform.position.z));
+    _bottomRight= Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0f, -Camera.main.transform.position.z));
+    _upLeft     = Camera.main.ScreenToWorldPoint(new Vector3(0f, Screen.height, -Camera.main.transform.position.z));
+    _upRight    = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, -Camera.main.transform.position.z));
+  
+    float fenceWidth = (fencePrefab.collider2D as CircleCollider2D).radius * 2;
+    int verticalFencesCount   =  Mathf.CeilToInt( (_upLeft      - _bottomLeft).magnitude/ fenceWidth );
+    int horizontalFencesCount =  Mathf.CeilToInt( (_bottomRight - _bottomLeft).magnitude/ fenceWidth );
+
+    for(int i = 0; i < verticalFencesCount; ++i){
+      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.up, Quaternion.identity) as GameObject).collider2D.enabled = true;
+      (Instantiate(fencePrefab, _bottomRight +  i * fenceWidth * Vector2.up, Quaternion.identity) as GameObject).collider2D.enabled = true;
+    }
+    
+    for(int i = 0; i < horizontalFencesCount; ++i){
+      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.right, Quaternion.identity) as GameObject).collider2D.enabled = true;
+      (Instantiate(fencePrefab, _upLeft      +  i * fenceWidth * Vector2.right, Quaternion.identity) as GameObject).collider2D.enabled = true;
+    }
+      
+  }
+
+  public void GameOver()
 	{
 		IAManager.Instance.Stop();
 		
@@ -79,17 +113,7 @@ public class GameManager : Singleton<GameManager> {
 	
 	public Vector2 GetRandomPointInPlane()
 	{
-		Vector2 result;
-		Vector3 vecAux = Vector3.zero;
-		
-		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
-
-		vecAux.y = Random.Range(0f, screenSize.y);
-		vecAux.x = Random.Range(0f, screenSize.x);
-    vecAux.z = -Camera.main.transform.position.z;
-		result = (Vector2)(Camera.main.ScreenToWorldPoint(vecAux));
-		
-		return result;
+		return new Vector2(Random.Range(0f, _upRight.x), Random.Range(0f, _upRight.y));;
 	}
 
     public void InitializePrefabs()

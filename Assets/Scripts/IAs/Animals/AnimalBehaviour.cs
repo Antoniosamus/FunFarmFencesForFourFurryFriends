@@ -52,7 +52,8 @@ public class AnimalBehaviour : StateMachineBehaviour
         switch (collisionName)
         {
             case "Farmer":
-                IAManager.Instance.Kill(this);
+                Destroy(other);
+                ChangeState(States.Hunt);
                 break;
             case "Obstacle":
                 switch ((States)GetState())

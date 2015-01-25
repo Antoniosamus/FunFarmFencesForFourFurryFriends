@@ -1,0 +1,355 @@
+fileFormatVersion: 2
+guid: 68380ddb15de08242abe46ca932587a6
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: btnStart
+    21300002: BtnResume
+    21300004: BtnPause
+    21300006: BtnAudioOn
+    21300008: BtnExit
+    21300010: BtnMenu
+    21300012: BtnAudioOff
+    21300014: BtnContinue
+    21300016: HighScore
+    21300018: ScoreSquare
+    21300020: starOff
+    21300022: starOn
+    21300024: stage
+    21300026: StageClear
+    21300028: HappyBoss
+    21300030: angryBoss
+    21300032: Mr1Happy
+    21300034: Mr1Angry
+    21300036: Mr2Happy
+    21300038: Mr2Angry
+    21300040: Mr3Happy
+    21300042: Mr3Angry
+    21300044: BadgePlant
+    21300046: BadgeAnt
+    21300048: BadgeEquidna
+    21300050: BadgeChi
+    21300052: BadgeVel
+    21300054: BadgeRIP
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: 0
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: btnStart
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 894
+        width: 350
+        height: 130
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnResume
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 894
+        width: 350
+        height: 127
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnPause
+      rect:
+        serializedVersion: 2
+        x: 700
+        y: 895
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnAudioOn
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 895
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnExit
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 764
+        width: 350
+        height: 130
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnMenu
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 764
+        width: 350
+        height: 130
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnAudioOff
+      rect:
+        serializedVersion: 2
+        x: 700
+        y: 767
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BtnContinue
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 634
+        width: 389
+        height: 130
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HighScore
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 700
+        width: 426
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: ScoreSquare
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 636
+        width: 426
+        height: 64
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: starOff
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 737
+        width: 164
+        height: 158
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: starOn
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 579
+        width: 164
+        height: 158
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: stage
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 516
+        width: 266
+        height: 63
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: StageClear
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 653
+        height: 378
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: HappyBoss
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 364
+        width: 172
+        height: 151
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: angryBoss
+      rect:
+        serializedVersion: 2
+        x: 825
+        y: 364
+        width: 172
+        height: 151
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr1Happy
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 202
+        width: 172
+        height: 162
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr1Angry
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 202
+        width: 172
+        height: 162
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr2Happy
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 107
+        width: 147
+        height: 148
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr2Angry
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 107
+        width: 147
+        height: 148
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr3Happy
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 100
+        width: 175
+        height: 155
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Mr3Angry
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 100
+        width: 175
+        height: 155
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgePlant
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 93
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgeAnt
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 0
+        width: 94
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgeEquidna
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 94
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgeChi
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 0
+        width: 94
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgeVel
+      rect:
+        serializedVersion: 2
+        x: 380
+        y: 0
+        width: 94
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: BadgeRIP
+      rect:
+        serializedVersion: 2
+        x: 475
+        y: 0
+        width: 123
+        height: 98
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

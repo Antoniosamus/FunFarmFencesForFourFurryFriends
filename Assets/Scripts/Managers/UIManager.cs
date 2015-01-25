@@ -40,10 +40,16 @@ public class UIManager : Singleton<UIManager> {
 	
 	}
 
+  public void PreStartGame()
+  {
+    startPanel.SetActive(false);
+		dinoPanel.SetActive(true);
+  }
+
 	public void StartGame()
 	{
 		Application.LoadLevelAdditive ("Main");
-		startPanel.SetActive(false);
+		dinoPanel.SetActive(false);
 		gamePanel.SetActive(true);
 	}
 

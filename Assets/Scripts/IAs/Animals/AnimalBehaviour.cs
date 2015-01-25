@@ -52,6 +52,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         switch (collisionName)
         {
             case "Obstacle":
+            case "Farmer":
                 switch ((States)GetState())
                 {
                     case States.Hunt:

@@ -100,7 +100,7 @@ public class Runner : MonoBehaviour
       return;
 
 		Vector2 direction = Target - (Vector2) transform.position;
-    if(direction == Vector2.zero)
+    if(direction.sqrMagnitude < _targetDistanceMinSqr)
       TargetReach();
 
 		float reorientation = Vector3.Cross(forwardDirection, direction).z;

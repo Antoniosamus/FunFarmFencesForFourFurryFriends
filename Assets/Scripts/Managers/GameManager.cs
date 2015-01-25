@@ -5,13 +5,17 @@ using System.Collections.Generic;
 public class GameManager : Singleton<GameManager> {
 	
 	private int AINumber = 10;
-	private int farmerNumber = 4;
+	private int farmerNumber = 1;
 
     private XMLParser LevelFile = new XMLParser();
     private List<XMLParser.LevelData> lLevelData;
     private XMLParser.LevelData[] aLevelData;
+    
+    [SerializeField]
+    private float endTime;
 
 	[SerializeField] GameObject farmerPrefab;
+    private List<FarmerController> Farmers = new List<FarmerController>();
 
 	void OnEnable () 
 	{
@@ -24,10 +28,23 @@ public class GameManager : Singleton<GameManager> {
             Vector3 v = GetPerifericPointInPlane();
             v.x += Random.Range(-15, 15);
             v.y += Random.Range(-15, 15);
-            Instantiate(farmerPrefab, v, Quaternion.identity);
+            var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
+            Farmers.Add(f.GetComponent<FarmerController>());
         }
 	}
-	
+
+    void Update() 
+    {
+        if (Farmers.TrueForAll(x => !x._canFarm)) StartCoroutine(TimeOutEndGame());
+    }
+
+    IEnumerator TimeOutEndGame() 
+    {
+        yield return new WaitForSeconds(endTime);
+        IAManager.Instance.Stop();
+        Debug.Log("FINAL DEL JUEGO!");
+    }
+
 	public Vector3 GetPerifericPointInPlane()
 	{
 		Vector3 vecAux = Vector3.zero;

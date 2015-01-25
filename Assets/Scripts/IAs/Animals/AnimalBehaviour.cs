@@ -12,7 +12,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	private Runner runner;
 	
-	public enum States { Hunt, Pasture, Escape }
+	public enum States { Hunt, Pasture, Escape, Stop }
 	
 	#region Inicialization
 
@@ -51,8 +51,10 @@ public class AnimalBehaviour : StateMachineBehaviour
         //Esto es un ñordo pero bueno
         switch (collisionName)
         {
-            case "Obstacle":
             case "Farmer":
+                IAManager.Instance.Kill(this);
+                break;
+            case "Obstacle":
                 switch ((States)GetState())
                 {
                     case States.Hunt:
@@ -198,4 +200,10 @@ public class AnimalBehaviour : StateMachineBehaviour
 	}
 	
 	#endregion
+
+    void Stop_Enter()
+    {
+        Debug.Log("Escape_Enter");
+        runner.Stop();
+    }
 }

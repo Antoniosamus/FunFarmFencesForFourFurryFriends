@@ -8,7 +8,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	private Runner _runner;
 	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
-    private bool _canFarm = true;
+    public bool _canFarm = true;
 
   [SerializeField]
   private float _routeStartDelay = 1f;
@@ -110,6 +110,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
 	        OnCollideWithObstacle(other);
 	      _currentRoute.Clear ();
           _canFarm = false;
+          _runner.Stop();
 	      break;
 
       case "Animal":
@@ -117,6 +118,7 @@ public class FarmerController : RouteFollower, IFarmerEvents
           OnCollideWithAnimal(other);
         _currentRoute.Clear();
         _canFarm = false;
+        _runner.Stop();
         break;
 	  }
 	}

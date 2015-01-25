@@ -40,7 +40,7 @@ public class GameManager : Singleton<GameManager>
 	{
     FenceWorld();
 
-		IAManager.Instance.Inizialize (AINumber);
+		IAManager.Instance.Inizialize(AINumber);
         //Vector3 vector;
 
         //Por probar InitializePrefabs();
@@ -69,9 +69,10 @@ public class GameManager : Singleton<GameManager>
       (Instantiate(fencePrefab, _bottomRight +  i * fenceWidth * Vector2.up, Quaternion.identity) as GameObject).collider2D.enabled = true;
     }
     
+
     for(int i = 0; i < horizontalFencesCount; ++i){
-      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.right, Quaternion.identity) as GameObject).collider2D.enabled = true;
-      (Instantiate(fencePrefab, _upLeft      +  i * fenceWidth * Vector2.right, Quaternion.identity) as GameObject).collider2D.enabled = true;
+      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right)) as GameObject).collider2D.enabled = true;
+      (Instantiate(fencePrefab, _upLeft      +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right)) as GameObject).collider2D.enabled = true;
     }
       
   }

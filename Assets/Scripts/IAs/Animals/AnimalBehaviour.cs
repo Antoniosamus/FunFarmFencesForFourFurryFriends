@@ -33,13 +33,11 @@ public class AnimalBehaviour : StateMachineBehaviour
 
     void OnEnable()
     {
-        runner.OnRouteInterrupt += OnRunnerRouteInterrupt;
         runner.OnTargetReach += OnRouteStepReach;
     }
 
 	void OnDisable()
 	{
-		runner.OnRouteInterrupt -= OnRunnerRouteInterrupt;
         runner.OnTargetReach -= OnRouteStepReach;
 	}
 	
@@ -47,33 +45,33 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	#region Events
 	
-	private void OnRunnerRouteInterrupt(GameObject other)
+	private void OnCollisionStay2D(Collision2D other)
 	{
-        string collisionName = LayerMask.LayerToName(other.layer);
-        //Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
+        string collisionName = LayerMask.LayerToName(other.gameObject.layer);
+        //Debug.Log(name + " -> " + other.gameObject.name + " (" + collisionName + ")");
         //Esto es un ñordo pero bueno
         switch (collisionName)
         {
             case "Farmer":
-                Destroy(other);
+                Destroy(other.gameObject);
                 ChangeState(States.Hunt);
                 break;
             case "Obstacle":
                 switch ((States)GetState())
                 {
                     case States.Hunt:
-                        HuntOnRunnerCollision(other);
+                        HuntOnRunnerCollision(other.gameObject);
                         break;
                     case States.Pasture:
-                        PastureOnRunnerCollision(other);
+                        PastureOnRunnerCollision(other.gameObject);
                         break;
                     case States.Escape:
-                        EscapeOnRunnerCollision(other);
+                        EscapeOnRunnerCollision(other.gameObject);
                         break;
                 }
                 break;
             case "Animal":
-                var av = other.GetComponent<AnimalBehaviour>();
+                var av = other.gameObject.GetComponent<AnimalBehaviour>();
                 if (av != null)
                 {
                     if (av.FoodChainLevel < FoodChainLevel) IAManager.Instance.Kill(this);
@@ -151,7 +149,9 @@ public class AnimalBehaviour : StateMachineBehaviour
 	{
     if(collision.layer == LayerMask.NameToLayer("Obstacle"))
     {
-      _animalsNotToHunt.Add(AnimalToHunt);
+      if(!_animalsNotToHunt.Contains(AnimalToHunt))
+        _animalsNotToHunt.Add(AnimalToHunt);
+
       AnimalToHunt = IAManager.Instance.GetAllHuntable(this).Except(_animalsNotToHunt).FirstOrDefault();
       if(AnimalToHunt == null)
         ChangeState(States.Pasture);
@@ -180,9 +180,11 @@ public class AnimalBehaviour : StateMachineBehaviour
 
         if (AnimalToHunt != null) yield break;
 
-        var a = IAManager.Instance.GetNearestToMe(this);
-        if (a != null) ChangeState(States.Hunt);
-        else StartCoroutine(CheckHunt());
+        var a = IAManager.Instance.GetAllHuntable(this).Except(_animalsNotToHunt).FirstOrDefault();
+        if (a != null) 
+          ChangeState(States.Hunt);
+        else 
+          StartCoroutine(CheckHunt());
     }
 
 	void Pasture_Update()
@@ -199,7 +201,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void PastureOnRunnerCollision(GameObject collision) 
 	{
-		ChangeState(States.Hunt);
+   
 	}
 	
 	#endregion

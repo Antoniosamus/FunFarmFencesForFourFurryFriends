@@ -31,6 +31,7 @@ public class FarmerController : RouteFollower
 
   protected override void OnDestoy()
   {
+    GameManager.Instance.Farmers.Remove(this);
     _runner = null;
     base.OnDestoy();
   }
@@ -56,6 +57,7 @@ public class FarmerController : RouteFollower
 
   //================================================================
   
+
   #region RouteFollower
   protected override void OnRouteStay(Vector2 currentPosition)
   {
@@ -93,12 +95,10 @@ public class FarmerController : RouteFollower
 
   //----------------------------------------
   
-  private void OnRouteRouteInterrupt (GameObject other)
+  private void OnRouteRouteInterrupt(GameObject other)
 	{
-    if(_runner.IsFollowingTarget) {
-	    _currentRoute.Clear();
-      _runner.Stop();
-    }
+	  _currentRoute.Clear();
+    _runner.Stop();
 	}
 
   #endregion

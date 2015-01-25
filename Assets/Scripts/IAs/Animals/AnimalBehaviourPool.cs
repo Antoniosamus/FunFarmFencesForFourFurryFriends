@@ -134,12 +134,6 @@ public class AnimalBehaviourPool
         for (var i = 0; i < count; i++)
         {
             Vector2 point = GameManager.Instance.GetRandomPointInPlane();
-
-            point.x = Random.Range(-10, 10);
-            point.y = Random.Range(-10, 10);
-
-            //Debug.Log(point.x + " " + point.y);
-
             array[i] = RandomSpawn(new Vector3(point.x, point.y, 0), Quaternion.identity);
             this.SetActive(array[i], true);
         }

@@ -113,7 +113,7 @@ public class AnimalBehaviour : StateMachineBehaviour
         IAManager.Instance.GetNearestToMe(this);
 
         if (AnimalToHunt != null) runner.Target = AnimalToHunt.transform.position;
-		
+        else ChangeState(States.Pasture);
         //if (Target == Vector3.zero) ChangeState(States.Pasture);
 	}
 	
@@ -158,6 +158,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	void Pasture_Update()
 	{
 		//Debug.Log("Pasture_Update");
+        ChangeState(States.Hunt);
 	}
 	
 	void Pasture_Exit()
@@ -186,6 +187,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	void Escape_Update()
 	{
 		//Debug.Log("Escape_Update");
+        ChangeState(States.Hunt);
 	}
 	
 	

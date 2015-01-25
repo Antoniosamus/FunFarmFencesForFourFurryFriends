@@ -1,16 +1,24 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager> {
 	
-	private int AINumber = 30;
+	private int AINumber = 10;
 	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();
     private List<XMLParser.LevelData> lLevelData;
     private XMLParser.LevelData[] aLevelData;
-    
+
+    public float Percent { get { return IAManager.Instance.AnimalPool.all.Count / AINumber; } }
+
+    public List<GameObject> AliveAnimals (string prefabName)
+    {
+        return IAManager.Instance.AnimalPool.all.FindAll(x => x.name.Contains(prefabName)).ConvertAll(x => x.gameObject).ToList();
+    }
+
     [SerializeField]
     private float endTime;
 

@@ -7,8 +7,8 @@ public class AnimalBehaviour : StateMachineBehaviour
 {
 	public int FoodChainLevel;
 	
-	private Vector3 Target = Vector3.zero;
-	public AnimalBehaviour AnimalToHunt;
+	//private Vector3 Target = Vector3.zero;
+	public AnimalBehaviour AnimalToHunt = null;
 	
 	private Runner runner;
 	
@@ -31,11 +31,13 @@ public class AnimalBehaviour : StateMachineBehaviour
     void OnEnable()
     {
         runner.OnRouteInterrupt += OnRunnerRouteInterrupt;
+        runner.OnTargetReach += OnRouteStepReach;
     }
 
 	void OnDisable()
 	{
 		runner.OnRouteInterrupt -= OnRunnerRouteInterrupt;
+        runner.OnTargetReach -= OnRouteStepReach;
 	}
 	
 	#endregion
@@ -45,11 +47,11 @@ public class AnimalBehaviour : StateMachineBehaviour
 	private void OnRunnerRouteInterrupt(GameObject other)
 	{
         string collisionName = LayerMask.LayerToName(other.layer);
-        //Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
+        Debug.Log(name + " -> " + other.name + " (" + collisionName + ")");
         //Esto es un ñordo pero bueno
         switch (collisionName)
         {
-            case "Fence":
+            case "Obstacle":
                 switch ((States)GetState())
                 {
                     case States.Hunt:
@@ -70,7 +72,7 @@ public class AnimalBehaviour : StateMachineBehaviour
                     if (av.FoodChainLevel < FoodChainLevel) IAManager.Instance.Kill(this);
                     else if (av.FoodChainLevel == FoodChainLevel)
                     {
-                        Target = av.gameObject.transform.position;
+                        runner.Target = av.gameObject.transform.position;
                         ChangeState(States.Escape);
                     }
                     else ChangeState(States.Hunt);
@@ -78,32 +80,47 @@ public class AnimalBehaviour : StateMachineBehaviour
                 break;
         }
 	}
-	
+
+    private void OnRouteStepReach()
+    {
+        switch ((States)GetState())
+        {
+            case States.Hunt:
+                IAManager.Instance.GetNearestToMe(this);
+                break;
+            case States.Pasture:
+                runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+                break;
+            case States.Escape:
+                runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+                break;
+        }
+    }
+
 	#endregion
 	
 	#region Hunt State
 	
 	void Hunt_Enter()
 	{
-		//Debug.Log("Hunt_Enter");
+		Debug.Log("Hunt_Enter");
 		
 		//1. Look for the nearest animal to hunt
         IAManager.Instance.GetNearestToMe(this);
+
+        if (AnimalToHunt != null) runner.Target = AnimalToHunt.transform.position;
 		
-        if (AnimalToHunt != null) Target = AnimalToHunt.transform.position;
-		
-        if (Target == Vector3.zero) ChangeState(States.Pasture);
+        //if (Target == Vector3.zero) ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Update()
 	{
-        //Debug.Log("Hunt_Update");
+        Debug.Log("Hunt_Update");
 
         //1. Look at the target and walk 
         if (AnimalToHunt != null)
         {
-            Target = AnimalToHunt.transform.position;
-            runner.Target = Target;
+            runner.Target = AnimalToHunt.transform.position;
         }
 
         /*if (Target == Vector3.zero)*/
@@ -112,10 +129,10 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Hunt_Exit()
 	{
-		//Debug.Log("Hunt_Exit");
+		Debug.Log("Hunt_Exit");
 		
 		//1. Free params
-		Target = Vector3.zero;
+        //runner.Target = Vector3.zero;
 	}
 	
 	void HuntOnRunnerCollision(GameObject collision)
@@ -129,31 +146,20 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Pasture_Enter()
 	{
-		//Debug.Log("Pasture_Enter");
-		Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
-		//1. No idea what to do here
+		Debug.Log("Pasture_Enter");
+        runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+        AnimalToHunt = null;
 	}
 	
 	void Pasture_Update()
 	{
-		//Debug.Log("Pasture_Update");
-		// 1. Select ramdom target near to me
-		if (Target == Vector3.zero)
-		{
-			// 1.Find a near point to me
-			Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
-		}
-		
-		// 2. Move to the target
-		runner.Target = Target;
-		
+		Debug.Log("Pasture_Update");
 	}
 	
 	void Pasture_Exit()
 	{
-		//Debug.Log("Pasture_Exit");
-		//1. No idea what to do here
-		Target = Vector2.zero;
+		Debug.Log("Pasture_Exit");
+        runner.Target = Vector2.zero;
 	}
 	
 	void PastureOnRunnerCollision(GameObject collision) 
@@ -167,35 +173,21 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Escape_Enter()
 	{
-		//Debug.Log("Escape_Enter");
-		//1. Pillo un punto al que huir
-        Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+		Debug.Log("Escape_Enter");
+        runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+        AnimalToHunt = null;
 		
 	}
 	
 	void Escape_Update()
 	{
-		//Debug.Log("Escape_Update");
-		// 1. Select ramdom target near to me
-		if (Target == Vector3.zero)
-		{
-			// 1.Find a near point to me
-			Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
-		}
-		else
-		{
-			// 2. Move to the target
-			runner.Target = Target;
-			// 3. Reach it?
-		}
+		Debug.Log("Escape_Update");
 	}
 	
 	
 	void Escape_Exit()
 	{
-		//Debug.Log("Escape_Exit");
-		//1. No idea what to do here
-		Target = Vector2.zero;
+		Debug.Log("Escape_Exit");
 		ChangeState(States.Hunt);
 	}
 	

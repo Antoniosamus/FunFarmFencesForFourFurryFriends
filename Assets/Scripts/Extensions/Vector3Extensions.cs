@@ -8,7 +8,7 @@ public static class Vector3Extensions
         return new Vector3(
             Vector3Extensions.GetRandomFloat(v3.x, distance),
             Vector3Extensions.GetRandomFloat(v3.y, distance),
-            Vector3Extensions.GetRandomFloat(v3.z, distance));
+            0);
     }
 
     public static float GetRandomFloat(float value, float variation)

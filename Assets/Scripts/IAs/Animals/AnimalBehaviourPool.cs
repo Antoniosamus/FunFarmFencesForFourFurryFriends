@@ -121,6 +121,7 @@ public class AnimalBehaviourPool
             // Make sure we don't insert it twice.
             all.Remove(obj);
             Object.DestroyObject(obj.gameObject);
+            obj = null;
             return true; // Object inserted back in stack.
         }
         return false; // Object already in stack.

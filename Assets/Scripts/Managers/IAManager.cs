@@ -41,24 +41,14 @@ public class IAManager : Singleton<IAManager>
     /// </summary>
     /// <param name="me"></param>
     /// <returns>AnimalBehaviour or Null</returns>
-    public void GetNearestToMe(AnimalBehaviour me)
+    public AnimalBehaviour GetNearestToMe(AnimalBehaviour me)
     {
-        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => Vector3.Distance( x.transform.position, me.transform.position));
-        me.AnimalToHunt = null;
+        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => Vector3.Distance(me.transform.position, x.transform.position));
 
         Debug.Log(me.name + " -> " + string.Join(", ", candidates.ToList().ConvertAll(x=>x.name).ToArray()));
 
-        if (candidates.Count() > 0) me.AnimalToHunt = candidates.First();
+        if (candidates.Count() > 0) return me.AnimalToHunt = candidates.First().GetComponent<AnimalBehaviour>();
 
-        //foreach (var anim in candidates)
-        //{
-        //    RaycastHit hit;
-        //    if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
-        //    {
-        //        // Draw line between m and the hit point
-        //        me.AnimalToHunt = anim;
-        //        break;
-        //    }
-        //}
+        return null;
     }
 }

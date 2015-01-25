@@ -59,7 +59,7 @@ public class Runner : MonoBehaviour
   //-------------------------------------------
 
   private bool _isFollowingTarget;
-  private bool IsFollowingTarget 
+  public bool IsFollowingTarget 
   { 
     get { return _isFollowingTarget; }
     set 

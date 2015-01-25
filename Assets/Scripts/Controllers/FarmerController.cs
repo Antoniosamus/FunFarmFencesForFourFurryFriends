@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public class FarmerController : RouteFollower
 {
   [SerializeField]
-	private Runner _runner;
-	private Queue<Vector2> _currentRoute = new Queue<Vector2>();
+	public Runner _runner;
+	public Queue<Vector2> _currentRoute = new Queue<Vector2>();
 
     public bool _canFarm = true;
 

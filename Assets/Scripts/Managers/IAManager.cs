@@ -45,7 +45,7 @@ public class IAManager : Singleton<IAManager>
     {
         var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => Vector3.Distance(me.transform.position, x.transform.position));
 
-        Debug.Log(me.name + " -> " + string.Join(", ", candidates.ToList().ConvertAll(x=>x.name).ToArray()));
+        //Debug.Log(me.name + " -> " + string.Join(", ", candidates.ToList().ConvertAll(x=>x.name).ToArray()));
 
         if (candidates.Count() > 0) return me.AnimalToHunt = candidates.First().GetComponent<AnimalBehaviour>();
 

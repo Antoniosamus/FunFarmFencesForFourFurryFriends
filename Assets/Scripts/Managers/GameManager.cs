@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class GameManager : Singleton<GameManager> {
 	
   private const int PositionOffset = 10;
-	private int AINumber = 10;
+  private int AINumber = 15;
 	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();

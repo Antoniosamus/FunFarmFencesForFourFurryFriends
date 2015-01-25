@@ -40,10 +40,8 @@ public class GameManager : Singleton<GameManager>
 
   void OnEnable () 
 	{
-    	FenceWorld();
-
+    FenceWorld();
 		Reinicialize ();
-
 		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
 	}
 
@@ -87,7 +85,6 @@ public class GameManager : Singleton<GameManager>
 
   public void GameOver()
 	{
-		IAManager.Instance.Stop();
 		
 		UIManager.Instance.SetGameOver();
 		

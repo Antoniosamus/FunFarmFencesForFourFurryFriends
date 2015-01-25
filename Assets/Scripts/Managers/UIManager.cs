@@ -89,9 +89,7 @@ public class UIManager : Singleton<UIManager> {
 	public void Reinit()
 	{
 		Time.timeScale = 1;
-
 		gameOverPanel.SetActive(false);
-
 		GameManager.Instance.Reinicialize ();
 	}
 

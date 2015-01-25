@@ -19,6 +19,11 @@ public class FenceCreator : MonoBehaviour
         InvokeRepeating("CreateFence", time, time);
     }
 
+    void OnDestroy()
+    {
+      StopAllCoroutines();
+    }
+
     public void CreateFence()
     {
         if (farmerController._runner.IsFollowingTarget == true)

@@ -13,14 +13,7 @@ public class IAManager : Singleton<IAManager>
         AnimalPool = new AnimalBehaviourPool(prefabs, numberAnimals);
     }
 
-    public void Stop()
-    {
-        foreach(var a in AnimalPool.all)
-        {
-            a.ChangeState(AnimalBehaviour.States.Stop);
-        }
-    }
-
+  
     public void AddAnimal(AnimalBehaviour animal)
     {
         AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);

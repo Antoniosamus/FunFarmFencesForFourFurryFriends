@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 public class GameManager : Singleton<GameManager> {
 	
+  private const int PositionOffset = 10;
 	private int AINumber = 10;
-
-	private const int PositionOffset = 10;
-
 	private int farmerNumber = 4;
 
     private XMLParser LevelFile = new XMLParser();

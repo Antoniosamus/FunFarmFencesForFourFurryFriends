@@ -180,9 +180,11 @@ public class AnimalBehaviour : StateMachineBehaviour
 
         if (AnimalToHunt != null) yield break;
 
-        var a = IAManager.Instance.GetNearestToMe(this);
-        if (a != null) ChangeState(States.Hunt);
-        else StartCoroutine(CheckHunt());
+        var a = IAManager.Instance.GetAllHuntable(this).Except(_animalsNotToHunt).FirstOrDefault();
+        if (a != null) 
+          ChangeState(States.Hunt);
+        else 
+          StartCoroutine(CheckHunt());
     }
 
 	void Pasture_Update()
@@ -199,7 +201,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void PastureOnRunnerCollision(GameObject collision) 
 	{
-		ChangeState(States.Hunt);
+   
 	}
 	
 	#endregion

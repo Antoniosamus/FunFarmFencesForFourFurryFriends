@@ -27,7 +27,9 @@ public class UIManager : Singleton<UIManager> {
 	
 	[SerializeField] GameObject gameOverPanel;
 	[SerializeField] GameObject pausePanel;
-  [SerializeField] GameObject startPanel;
+ 	[SerializeField] GameObject startPanel;
+	[SerializeField] GameObject gamePanel;
+	[SerializeField] GameObject dinoPanel;
 
 	public void OnEnable()
 	{
@@ -42,11 +44,14 @@ public class UIManager : Singleton<UIManager> {
 	{
 		Application.LoadLevelAdditive ("Main");
 		startPanel.SetActive(false);
+		gamePanel.SetActive(true);
 	}
 
 	public void SetGameOver()
 	{
 		//this.gameObject.SetActive (true);
+
+		GameManager.Instance.Clean ();
 		gameOverPanel.SetActive (true);
 		SetStars(GameManager.Instance.Percent);
 	}
@@ -72,13 +77,18 @@ public class UIManager : Singleton<UIManager> {
 	public void pauseClicked()
 	{
 		Time.timeScale = 0;
-    pausePanel.SetActive(true);
+		pausePanel.SetActive(true);
 	}
 
 	public void ContinueClicked()
 	{
 		Time.timeScale = 1;
-    pausePanel.SetActive(false);
+
+		if (pausePanel.gameObject.activeSelf)
+			pausePanel.SetActive(false);
+
+		if (gameOverPanel.gameObject.activeSelf)
+			gameOverPanel.SetActive(false);
 	}
 
 

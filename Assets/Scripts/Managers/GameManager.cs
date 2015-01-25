@@ -125,4 +125,9 @@ public class GameManager : Singleton<GameManager> {
 
 	}
 
+	public void Clean ()
+	{
+		Farmers.Clear ();
+		IAManager.Instance.AnimalPool.Clear ();
+	}
 }

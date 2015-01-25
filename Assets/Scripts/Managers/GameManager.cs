@@ -48,6 +48,10 @@ public class GameManager : Singleton<GameManager> {
     {
         yield return new WaitForSeconds(endTime);
         IAManager.Instance.Stop();
+
+		UIManager.Instance.SetGameOver ();
+
+		Application.LoadLevel ("EmptyScene");
         Debug.Log("FINAL DEL JUEGO!");
     }
 

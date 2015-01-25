@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 
 
-public class UIManager : MonoBehaviour {
+public class UIManager : Singleton<UIManager> {
 
 	[SerializeField] Button startGameButton;
 	[SerializeField] Button continueGameButton;
@@ -24,8 +24,9 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] Text scoreLabel;
 
 	[SerializeField] Sprite [] badgesSprites;
-
-	[SerializeField] GameObject [] badgesSpritesDefault;
+	
+	[SerializeField] GameObject gameOverPanel;
+	[SerializeField] GameObject pausePanel;
 
 	public void OnEnable()
 	{
@@ -34,7 +35,19 @@ public class UIManager : MonoBehaviour {
 
 	public void OnDisable()
 	{
+	
+	}
 
+	public void StartGame()
+	{
+		Application.LoadLevel ("Main");
+		this.gameObject.SetActive(false);
+	}
+
+	public void SetGameOver()
+	{
+		this.gameOverPanel.SetActive (true);
+		SetStars (GameManager.Instance.Percent);
 	}
 
 	public void SetBadges()
@@ -42,7 +55,7 @@ public class UIManager : MonoBehaviour {
 
 	}
 
-	public void SetStars(int percentage)
+	public void SetStars(float percentage)
 	{
 		float divided = percentage / 3;
 

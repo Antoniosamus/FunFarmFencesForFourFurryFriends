@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
   [SerializeField]	
   private GameObject fencePrefab;
 
-  private const int PositionOffset = 5;
+  private const int PositionOffset = 2;
   private int AINumber = 15;
 	private int farmerNumber = 4;
 
@@ -65,14 +65,13 @@ public class GameManager : Singleton<GameManager>
     int horizontalFencesCount =  Mathf.CeilToInt( (_bottomRight - _bottomLeft).magnitude/ fenceWidth );
 
     for(int i = 0; i < verticalFencesCount; ++i){
-      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.up, Quaternion.identity) as GameObject).collider2D.enabled = true;
-      (Instantiate(fencePrefab, _bottomRight +  i * fenceWidth * Vector2.up, Quaternion.identity) as GameObject).collider2D.enabled = true;
+      ((GameObject) Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.up, Quaternion.identity)).collider2D.enabled = true;
+      ((GameObject) Instantiate(fencePrefab, _bottomRight +  i * fenceWidth * Vector2.up, Quaternion.identity)).collider2D.enabled = true;
     }
-    
 
     for(int i = 0; i < horizontalFencesCount; ++i){
-      (Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right)) as GameObject).collider2D.enabled = true;
-      (Instantiate(fencePrefab, _upLeft      +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right)) as GameObject).collider2D.enabled = true;
+      ((GameObject) Instantiate(fencePrefab, _bottomLeft  +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right))).collider2D.enabled = true;
+      ((GameObject) Instantiate(fencePrefab, _upLeft      +  i * fenceWidth * Vector2.right, Quaternion.FromToRotation(Vector2.up, Vector3.right))).collider2D.enabled = true;
     }
       
   }
@@ -96,7 +95,7 @@ public class GameManager : Singleton<GameManager>
       case 1:
       return new Vector2(Random.Range(_upLeft.x, _upRight.x)        , _upLeft.y - PositionOffset);
       case 2:
-      return new Vector2(_bottomLeft.x  + PositionOffset,  Random.Range(_bottomLeft.y, _upLeft.y) );
+      return new Vector2(_bottomLeft.x  + PositionOffset, Random.Range(_bottomLeft.y, _upLeft.y) );
       default:
       return new Vector2(_bottomRight.x - PositionOffset, Random.Range(_bottomRight.y, _upRight.y) );
     }

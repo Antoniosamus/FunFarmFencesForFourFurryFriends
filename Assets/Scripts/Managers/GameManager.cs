@@ -24,7 +24,7 @@ public class GameManager : Singleton<GameManager> {
     private float endTime;
 
 	[SerializeField] GameObject farmerPrefab;
-    private List<FarmerController> Farmers = new List<FarmerController>();
+  public List<FarmerController> Farmers = new List<FarmerController>();
   
 
   void OnEnable () 
@@ -41,18 +41,7 @@ public class GameManager : Singleton<GameManager> {
         }
 		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
 	}
-
-    void Update() 
-    {
-        if (Farmers.TrueForAll(x => !x._canFarm)) StartCoroutine(TimeOutEndGame());
-    }
-
-    IEnumerator TimeOutEndGame() 
-    {
-        yield return new WaitForSeconds(endTime);
-		GameOver ();
-    }
-
+   
 	public void GameOver()
 	{
 		IAManager.Instance.Stop();
@@ -120,9 +109,9 @@ public class GameManager : Singleton<GameManager> {
 
 	public void CheckIfEnd()
 	{
-		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null))))
+		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null)))
+      || Farmers.Count == 0 || Farmers.All(f => f == null))
 			GameOver ();
-
 	}
 
 }

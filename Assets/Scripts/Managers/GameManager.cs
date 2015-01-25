@@ -30,32 +30,28 @@ public class GameManager : Singleton<GameManager> {
 	
 	public Vector3 GetPerifericPointInPlane()
 	{
-		Vector3 result;
 		Vector3 vecAux = Vector3.zero;
-		Vector3 vecCamera = Vector3.zero;
+		Vector3 worldPoint = Vector3.zero;
+    
+		Vector2 screenSize = new Vector2(Screen.width, Screen.height);
 
-		Vector3 screenSize = new Vector3(Screen.currentResolution.width, Screen.currentResolution.height, 10);
-
-		int ChoosenMax = Random.Range (0, 1);
-		int ChoosenSide = Random.Range (0, 1);
+		int ChoosenMax  = Random.Range(0, 1);
+		int ChoosenSide = Random.Range(0, 1);
 		
 		if (ChoosenSide == 1) 
 		{
 			vecAux.x =  (ChoosenMax == 0) ? 0 : screenSize.x ;
-			vecAux.y = Random.Range (0, screenSize.z);
+			vecAux.y = Random.Range (0, screenSize.y);
 		}
 		else
 		{
 			vecAux.x = Random.Range (0, screenSize.x);
-			vecAux.y =  (ChoosenMax == 0) ? 0 : screenSize.z ;
+			vecAux.y =  (ChoosenMax == 0) ? 0 : screenSize.y ;
 		}
 
-
-		vecCamera = Camera.main.ScreenToWorldPoint (vecAux);
-		result = new Vector3 (vecCamera.x, vecCamera.y, 10);
-
-
-		return result;
+    vecAux.z = -Camera.main.transform.position.z;
+		worldPoint = Camera.main.ScreenToWorldPoint(vecAux);
+		return new Vector3(worldPoint.x, worldPoint.y, 0);
 	}
 	
 	public Vector2 GetRandomPointInPlane()

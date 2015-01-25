@@ -13,6 +13,14 @@ public class IAManager : Singleton<IAManager>
         AnimalPool = new AnimalBehaviourPool(prefabs, numberAnimals);
     }
 
+    public void Stop()
+    {
+        foreach(var a in AnimalPool.all)
+        {
+            a.ChangeState(AnimalBehaviour.States.Stop);
+        }
+    }
+
     public void AddAnimal(AnimalBehaviour animal)
     {
         AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);
@@ -35,17 +43,22 @@ public class IAManager : Singleton<IAManager>
     /// <returns>AnimalBehaviour or Null</returns>
     public void GetNearestToMe(AnimalBehaviour me)
     {
-        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => x.FoodChainLevel);
+        var candidates = AnimalPool.all.FindAll(x => x.FoodChainLevel > me.FoodChainLevel).OrderBy(x => Vector3.Distance( x.transform.position, me.transform.position));
         me.AnimalToHunt = null;
-        foreach (var anim in candidates)
-        {
-            RaycastHit hit;
-            if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
-            {
-                // Draw line between m and the hit point
-                me.AnimalToHunt = anim;
-                break;
-            }
-        }
+
+        Debug.Log(me.name + " -> " + string.Join(", ", candidates.ToList().ConvertAll(x=>x.name).ToArray()));
+
+        if (candidates.Count() > 0) me.AnimalToHunt = candidates.First();
+
+        //foreach (var anim in candidates)
+        //{
+        //    RaycastHit hit;
+        //    if (!Physics.Linecast(me.transform.position, anim.transform.position, out hit))
+        //    {
+        //        // Draw line between m and the hit point
+        //        me.AnimalToHunt = anim;
+        //        break;
+        //    }
+        //}
     }
 }

@@ -12,7 +12,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	private Runner runner;
 	
-	public enum States { Hunt, Pasture, Escape }
+	public enum States { Hunt, Pasture, Escape, Stop }
 	
 	#region Inicialization
 
@@ -51,6 +51,9 @@ public class AnimalBehaviour : StateMachineBehaviour
         //Esto es un ñordo pero bueno
         switch (collisionName)
         {
+            case "Farmer":
+                IAManager.Instance.Kill(this);
+                break;
             case "Obstacle":
                 switch ((States)GetState())
                 {
@@ -83,18 +86,19 @@ public class AnimalBehaviour : StateMachineBehaviour
 
     private void OnRouteStepReach()
     {
-        switch ((States)GetState())
-        {
-            case States.Hunt:
-                IAManager.Instance.GetNearestToMe(this);
-                break;
-            case States.Pasture:
-                runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
-                break;
-            case States.Escape:
-                runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
-                break;
-        }
+        IAManager.Instance.GetNearestToMe(this);
+        //switch ((States)GetState())
+        //{
+        //    case States.Hunt:
+        //        IAManager.Instance.GetNearestToMe(this);
+        //        break;
+        //    case States.Pasture:
+        //        runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+        //        break;
+        //    case States.Escape:
+        //        runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
+        //        break;
+        //}
     }
 
 	#endregion
@@ -103,28 +107,26 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Hunt_Enter()
 	{
-		Debug.Log("Hunt_Enter");
+		//Debug.Log("Hunt_Enter");
 		
 		//1. Look for the nearest animal to hunt
         IAManager.Instance.GetNearestToMe(this);
 
-        if (AnimalToHunt != null) runner.Target = AnimalToHunt.transform.position;
+        if (AnimalToHunt != null) 
+          runner.Target = AnimalToHunt.transform.position;
 		
         //if (Target == Vector3.zero) ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Update()
 	{
-        Debug.Log("Hunt_Update");
+        //Debug.Log("Hunt_Update");
 
         //1. Look at the target and walk 
         if (AnimalToHunt != null)
-        {
             runner.Target = AnimalToHunt.transform.position;
-        }
-
-        /*if (Target == Vector3.zero)*/
-        ChangeState(States.Pasture);
+        else
+          ChangeState(States.Pasture);
 	}
 	
 	void Hunt_Exit()
@@ -146,19 +148,19 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Pasture_Enter()
 	{
-		Debug.Log("Pasture_Enter");
+		//Debug.Log("Pasture_Enter");
         runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
         AnimalToHunt = null;
 	}
 	
 	void Pasture_Update()
 	{
-		Debug.Log("Pasture_Update");
+		//Debug.Log("Pasture_Update");
 	}
 	
 	void Pasture_Exit()
 	{
-		Debug.Log("Pasture_Exit");
+		//Debug.Log("Pasture_Exit");
         runner.Target = Vector2.zero;
 	}
 	
@@ -173,7 +175,7 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Escape_Enter()
 	{
-		Debug.Log("Escape_Enter");
+		//Debug.Log("Escape_Enter");
         runner.Target = transform.position.GetRamdomAtDistance((float)Random.Range(5, 30));
         AnimalToHunt = null;
 		
@@ -181,13 +183,13 @@ public class AnimalBehaviour : StateMachineBehaviour
 	
 	void Escape_Update()
 	{
-		Debug.Log("Escape_Update");
+		//Debug.Log("Escape_Update");
 	}
 	
 	
 	void Escape_Exit()
 	{
-		Debug.Log("Escape_Exit");
+		//Debug.Log("Escape_Exit");
 		ChangeState(States.Hunt);
 	}
 	
@@ -197,4 +199,10 @@ public class AnimalBehaviour : StateMachineBehaviour
 	}
 	
 	#endregion
+
+    void Stop_Enter()
+    {
+        //Debug.Log("Escape_Enter");
+        runner.Stop();
+    }
 }

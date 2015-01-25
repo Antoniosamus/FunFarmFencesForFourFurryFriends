@@ -40,7 +40,7 @@ namespace MonsterLove.StateMachine
 			stateMachine.Initialize<T>(this);
 		}
 
-		protected void ChangeState(Enum newState)
+		public void ChangeState(Enum newState)
 		{
 			stateMachine.ChangeState(newState);
 		}

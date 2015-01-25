@@ -51,4 +51,14 @@ public class IAManager : Singleton<IAManager>
 
         return null;
     }
+
+    //--------------------
+
+    public List<AnimalBehaviour> GetAllHuntable(AnimalBehaviour me)
+    {
+        return AnimalPool.all
+          .FindAll(x => x.FoodChainLevel > me.FoodChainLevel)
+          .OrderBy(x => Vector3.Distance(me.transform.position, x.transform.position))
+          .ToList().ConvertAll(x => x.GetComponent<AnimalBehaviour>());
+    }
 }

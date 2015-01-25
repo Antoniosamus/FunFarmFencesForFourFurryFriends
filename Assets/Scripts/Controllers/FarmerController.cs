@@ -95,8 +95,10 @@ public class FarmerController : RouteFollower
   
   private void OnRouteRouteInterrupt (GameObject other)
 	{
-	  _currentRoute.Clear();
-    _runner.Stop();
+    if(_runner.IsFollowingTarget) {
+	    _currentRoute.Clear();
+      _runner.Stop();
+    }
 	}
 
   #endregion

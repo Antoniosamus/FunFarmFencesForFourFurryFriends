@@ -2,18 +2,32 @@
 using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
+using SimpleJSON;
 
 public class IAManager : Singleton<IAManager> 
 {
     public AnimalBehaviourPool AnimalPool;
     public GameObject[] prefabs;
 
-    public void Inizialize(int numberAnimals)
+    public void InizializeRamdom(int numberAnimals)
     {
+        AnimalPool.all.Clear();
         AnimalPool = new AnimalBehaviourPool(prefabs, numberAnimals);
     }
 
-  
+    internal void Inizialize(List<JSONNode> animals)
+    {
+        if (AnimalPool != null)
+            AnimalPool.all.Clear();
+
+        foreach (var animal in animals) 
+        {
+            var prefab = prefabs.ToList().Find(p => p.name == animal["Type"]);
+            var f = Instantiate(prefab, GameManager.GetInWorld(animal["x"].AsFloat, animal["y"].AsFloat), Quaternion.identity) as GameObject;
+        }
+    }
+
+
     public void AddAnimal(AnimalBehaviour animal)
     {
         AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);

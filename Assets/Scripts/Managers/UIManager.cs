@@ -99,7 +99,7 @@ public class UIManager : Singleton<UIManager> {
 	{
 		Time.timeScale = 1;
 		gameOverPanel.SetActive(false);
-		GameManager.Instance.Reinicialize ();
+		GameManager.Instance.Inicialize ();
 	}
 
 	public void AudioClicked()

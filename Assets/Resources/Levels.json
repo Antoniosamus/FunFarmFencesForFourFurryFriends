@@ -1,0 +1,28 @@
+[
+	{
+		"Farmers" : [ 
+			{"x":0, "y":0}, 
+			{"x":100, "y":100}
+		],
+		"Animals" : [
+			{"Type": "Plant", "x":0, "y":100 },
+			{"Type": "Ant", "x":0, "y":100 },
+			{"Type": "Velociraptor", "x":0, "y":100 }
+		]
+	},
+	
+	{
+		"Farmers" : [ 
+			{"x":0, "y":0}, 
+			{"x":50, "y":50},
+			{"x":50, "y":50}
+		],
+		"Animals" : [
+			{"Type": "Ant", "x":0, "y":100 },
+			{"Type": "Anteater", "x":0, "y":100 },
+			{"Type": "Chiguagua", "x":0, "y":100 },
+			{"Type": "Plant", "x":0, "y":100 },
+			{"Type": "Velociraptor", "x":0, "y":100 }
+		]
+	}
+]

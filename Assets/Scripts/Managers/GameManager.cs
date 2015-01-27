@@ -4,19 +4,16 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
+using SimpleJSON;
 
 public class GameManager : Singleton<GameManager> 
 {
   [SerializeField]	
   private GameObject fencePrefab;
 
-  private const int PositionOffset = 2;
-  public int AINumber = 15;
+    private const int PositionOffset = 2;
+    public int AINumber = 15;
 	private int farmerNumber = 4;
-
-    private XMLParser LevelFile = new XMLParser();
-    private List<XMLParser.LevelData> lLevelData;
-    private XMLParser.LevelData[] aLevelData;
 
     public float Percent { get { 
 			return IAManager.Instance.AnimalPool.all.Count() / (float)AINumber; } }
@@ -32,34 +29,67 @@ public class GameManager : Singleton<GameManager>
     private float endTime;
 
 	[SerializeField] GameObject farmerPrefab;
-  public List<FarmerController> Farmers = new List<FarmerController>();
-  private Vector2 _bottomLeft;
-  private Vector2 _bottomRight;
-  private Vector2 _upLeft;
-  private Vector2 _upRight;
+    public List<FarmerController> Farmers = new List<FarmerController>();
+    private Vector2 _bottomLeft;
+    private Vector2 _bottomRight;
+    private Vector2 _upLeft;
+    private Vector2 _upRight;
 
+    void OnEnable () 
+    {
+        FenceWorld();
+	    Inicialize ();
+	    InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
+    }
 
-  void OnEnable () 
+    JSONArray JsonLevels; 
+    private int currentLevel = 1;
+    private int LastLevel { get { return JsonLevels.AsArray.Count - 1; } }
+    static string jsonFile = "Levels.json";
+
+	public void Inicialize()
 	{
-    FenceWorld();
-		Reinicialize ();
-		InvokeRepeating ("CheckIfEnd", 5.0f, 5.0f);
+        //Load texture from disk
+        TextAsset json = Resources.Load("Levels") as TextAsset;
+        JsonLevels = JSON.Parse(json.text).AsArray;
+        LoadLevel(currentLevel);
 	}
 
+    public void LoadLevel(int numLevel)
+    {
+        Clean();
 
-	public void Reinicialize()
-	{
-		IAManager.Instance.Inizialize(AINumber);
-		//Vector3 vector;
-		
-		//Por probar InitializePrefabs();
-		for (int i = 0; i < farmerNumber; i++)
-		{
-			Vector3 v = GetPerifericPointInPlane();
-			var f = Instantiate(farmerPrefab, v, Quaternion.identity) as GameObject;
-			Farmers.Add(f.GetComponent<FarmerController>());
-		}
-	}
+        var Level = JsonLevels[numLevel];
+
+        IAManager.Instance.Inizialize(Level["Animals"].AsArray.Childs.ToList());
+
+        foreach(var farmer in Level["Farmers"].AsArray.Childs)
+        {
+            var f = Instantiate(farmerPrefab, GetInWorld(farmer["x"].AsFloat, farmer["y"].AsFloat), Quaternion.identity) as GameObject;
+            //Farmers.Add(f.GetComponent<FarmerController>());
+        }
+    }
+
+    public static Vector3 GetInWorld(float x, float y)
+    {
+        Vector3 scale = new Vector3();
+
+        scale.x = ChangeScale(x, 0, 100, 0, Screen.width);
+        scale.y = ChangeScale(y, 0, 100, 0, Screen.height);
+        scale.z = -Camera.main.transform.position.z;
+        return Camera.main.ScreenToWorldPoint(scale);
+    }
+
+    public static float ChangeScale(float x, float A, float B, float C, float D) 
+    {
+        return C * (1 - (x - A) / (B - A)) + D * (x - A) / (B - A);
+    }
+
+    public void NextLevel()
+    {
+        currentLevel++;
+        LoadLevel(currentLevel);
+    }
 
   private void FenceWorld()
   {
@@ -113,21 +143,6 @@ public class GameManager : Singleton<GameManager>
 		return new Vector2(Random.Range(_bottomLeft.x, _upRight.x), Random.Range(_bottomLeft.y, _upRight.y));;
 	}
 
-    public void InitializePrefabs()
-    {
-        //aLevelData = lLevelData.ToArray();
-        ////int i = 0;
-        //foreach (XMLParser.AnimalData tempAnimalD in aLevelData[0].Animals)
-        //{
-        //    IAManager.Instance.prefabs[0].name = tempAnimalD.name;
-        //    IAManager.Instance.Inizialize(tempAnimalD.AnimalAmount);
-        //    //i++;
-        //}
-
-        //farmerNumber = aLevelData[0].FarmerAmount;
-    }
-
-
 	public void CheckIfEnd()
 	{
 		if (!(IAManager.Instance.AnimalPool.all.Any(x => (x.AnimalToHunt != null)))
@@ -140,30 +155,21 @@ public class GameManager : Singleton<GameManager>
 
 	public void Clean ()
 	{
-
 		foreach (GameObject obj in fencesInternal) 
-		{
 			if(obj != null)
 				Destroy(obj);
-		}
 
 		fencesInternal.Clear ();
 
 		foreach (FarmerController obj in Farmers) 
-		{
 			if (obj != null)
 				Destroy(obj.gameObject);
-		}
 
 		Farmers.Clear ();
 
-
-		foreach (AnimalBehaviour obj in IAManager.Instance.AnimalPool.all) 
-		{
-			if (obj != null)
-				Destroy(obj.gameObject);
-		}
-
-
+        if (IAManager.Instance.AnimalPool != null)
+		    foreach (AnimalBehaviour obj in IAManager.Instance.AnimalPool.all) 
+			    if (obj != null)
+				    Destroy(obj.gameObject);
 	}
 }

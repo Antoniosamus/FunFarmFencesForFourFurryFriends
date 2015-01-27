@@ -18,7 +18,9 @@ public class AnimalBehaviourPool
 
     // The list of all game objects created thus far (used for efficiently
     // unspawning all of them at once, see UnspawnAll).
-    public List<AnimalBehaviour> all;
+    public List<AnimalBehaviour> all = new List<AnimalBehaviour>();
+
+    public AnimalBehaviourPool() { }
 
     // An optional function that will be called whenever a new object is instantiated.
     // The newly instantiated object is passed to it, which allows users of the pool
@@ -41,7 +43,7 @@ public class AnimalBehaviourPool
         else
             this.all = new List<AnimalBehaviour>();
 
-        PrePopulate(initialCapacity);
+        //PrePopulate(initialCapacity);
     }
 
     public GameObject GetRamdomPrefab() 

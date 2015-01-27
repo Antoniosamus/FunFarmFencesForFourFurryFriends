@@ -9,6 +9,11 @@ public class IAManager : Singleton<IAManager>
     public AnimalBehaviourPool AnimalPool;
     public GameObject[] prefabs;
 
+    void Awake() 
+    {
+        AnimalPool = new AnimalBehaviourPool(prefabs, 200);
+    }
+
     public void InizializeRamdom(int numberAnimals)
     {
         AnimalPool.all.Clear();
@@ -19,18 +24,24 @@ public class IAManager : Singleton<IAManager>
     {
         if (AnimalPool != null)
             AnimalPool.all.Clear();
+        else
+            AnimalPool = new AnimalBehaviourPool(prefabs, 200);
 
         foreach (var animal in animals) 
         {
-            var prefab = prefabs.ToList().Find(p => p.name == animal["Type"]);
-            var f = Instantiate(prefab, GameManager.GetInWorld(animal["x"].AsFloat, animal["y"].AsFloat), Quaternion.identity) as GameObject;
+            var prefab = prefabs.ToList().FirstOrDefault(p => p.name == animal["Type"].ToString().Replace("\"", ""));
+            if(prefab != null)
+            {
+                var f = Instantiate(prefab, GameManager.GetInWorld(animal["x"].AsFloat, animal["y"].AsFloat), Quaternion.identity) as GameObject;
+                AddAnimal(f.GetComponent<AnimalBehaviour>());
+            }
         }
     }
 
 
     public void AddAnimal(AnimalBehaviour animal)
     {
-        AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);
+            AnimalPool.Add(animal, animal.transform.position, animal.transform.rotation);
     }
 
     public void AddAnimal(AnimalBehaviour animal, Vector3 position, Quaternion rotation)
